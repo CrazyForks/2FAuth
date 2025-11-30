@@ -68,21 +68,21 @@ class Icon extends Model
     /**
      * The model's attributes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = ['name'];
 

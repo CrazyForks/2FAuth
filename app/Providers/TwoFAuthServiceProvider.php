@@ -12,6 +12,7 @@ use App\Services\TwoFAccountService;
 use enshrined\svgSanitize\Sanitizer;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 use Zxing\QrReader;
 
 class TwoFAuthServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -48,7 +49,10 @@ class TwoFAuthServiceProvider extends ServiceProvider implements DeferrableProvi
         });
 
         $this->app->bind(QrReader::class, function ($app, array $parameters) {
-            return new QrReader($parameters['imgSource'], $parameters['sourceType']);
+            $imgSource  = $parameters['imgSource'] ?? throw new InvalidArgumentException('QrReader requires "imgSource" when resolved from the container.');
+            $sourceType = $parameters['sourceType'] ?? throw new InvalidArgumentException('QrReader requires "sourceType" when resolved from the container.');
+
+            return new QrReader($imgSource, $sourceType);
         });
     }
 

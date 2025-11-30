@@ -2,7 +2,6 @@
 
 namespace App\Extensions;
 
-use App\Models\WebAuthnAuthenticatable;
 use Illuminate\Auth\EloquentUserProvider;
 use Laragear\WebAuthn\Auth\WebAuthnUserProvider;
 
@@ -15,8 +14,8 @@ class WebauthnTwoFAuthUserProvider extends WebAuthnUserProvider
      */
     public function validateCredentials($user, array $credentials) : bool
     {
-        if ($user instanceof WebAuthnAuthenticatable && $this->isSignedChallenge($credentials)) {
-            return $this->validateWebAuthn($user);
+        if ($this->userIsWebAuthnAuthenticatable() && $this->isSignedChallenge($credentials)) {
+            return $this->validateWebAuthn($user, $credentials);
         }
 
         // If the user disabled the fallback, we will validate the credential password.

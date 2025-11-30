@@ -47,21 +47,21 @@ class Group extends Model implements Sortable
     /**
      * model's array form.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = ['name'];
 
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $appends = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = ['created_at', 'updated_at'];
 

@@ -92,6 +92,7 @@ class IconService
             }
 
             $imagesLinkResource = Storage::disk('imagesLink')->get($filename);
+
             if ($imagesLinkResource && self::isValidImageResource($filename, $imagesLinkResource)) {
                 // Should be a valid image, we move it to the icons disk
                 if (IconStore::store($filename, $imagesLinkResource)) {
@@ -109,7 +110,7 @@ class IconService
             }
         }
         // @codeCoverageIgnoreStart
-        catch (\Exception|\Throwable $ex) {
+        catch (\Throwable $ex) {
             Log::error(sprintf('Icon storage failed: %s', $ex->getMessage()));
         }
         // @codeCoverageIgnoreEnd
@@ -127,7 +128,7 @@ class IconService
     {
         Storage::disk('temp')->put($filename, $content);
         $extension = Str::replace('jpg', 'jpeg', pathinfo($filename, PATHINFO_EXTENSION), false);
-        $mimeType  = Storage::disk('temp')->mimeType($filename);
+        $mimeType  = Storage::mimeType(Storage::disk('temp')->path($filename));
 
         $isValid = self::IsSupportedMimeType($mimeType)
             && ($mimeType !== 'image/svg+xml' ? self::IsImage(Storage::disk('temp')->path($filename)) : true)
@@ -155,7 +156,7 @@ class IconService
             }
 
             foreach ($files as $file) {
-                $mimeType = Storage::disk('iconPacks')->mimeType($file);
+                $mimeType = Storage::mimeType(Storage::disk('iconPacks')->path($file));
                 $isImage  = $mimeType !== 'image/svg+xml'
                     ? self::IsImage(Storage::disk('iconPacks')->path($file))
                     : true;

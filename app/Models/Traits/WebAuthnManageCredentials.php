@@ -3,7 +3,6 @@
 namespace App\Models\Traits;
 
 use App\Notifications\WebauthnRecoveryNotification;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @see \App\Models\WebAuthnAuthenticatable
@@ -32,7 +31,7 @@ trait WebAuthnManageCredentials
             return;
         }
 
-        if ($this->webAuthnCredentials instanceof Collection && $this->webAuthnCredentials->isNotEmpty()) {
+        if ($this->webAuthnCredentials->isNotEmpty()) {
             $this->webAuthnCredentials->whereIn('id', $id)->each->delete();
 
             $this->setRelation('webAuthnCredentials', $this->webAuthnCredentials->whereNotIn('id', $id));
