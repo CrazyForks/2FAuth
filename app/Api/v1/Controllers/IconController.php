@@ -3,6 +3,7 @@
 namespace App\Api\v1\Controllers;
 
 use App\Api\v1\Requests\IconFetchRequest;
+use App\Api\v1\Requests\IconStoreRequest;
 use App\Facades\Icons;
 use App\Facades\IconStore;
 use App\Facades\LogoLib;
@@ -21,12 +22,8 @@ class IconController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function upload(Request $request)
+    public function upload(IconStoreRequest $request)
     {
-        $this->validate($request, [
-            'icon' => 'required|image',
-        ]);
-
         $icon     = $request->file('icon');
         $isStored = $name = false;
 
