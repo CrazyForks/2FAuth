@@ -43,10 +43,10 @@ class WebAuthnLoginController extends Controller
     public function options(AssertionRequest $request) : Responsable|JsonResponse
     {
         switch (config('webauthn.user_verification')) {
-            case UserVerification::DISCOURAGED:
+            case UserVerification::Discouraged:
                 $request = $request->fastLogin();    // Makes the authenticator to only check for user presence on registration
                 break;
-            case UserVerification::REQUIRED:
+            case UserVerification::Required:
                 $request = $request->secureLogin();  // Makes the authenticator to always verify the user thoroughly on registration
                 break;
         }

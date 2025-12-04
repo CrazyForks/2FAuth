@@ -13,32 +13,31 @@ class WebauthnCredentialBroker extends PasswordBroker
     /**
      * Send a password reset link to a user.
      */
-    public function sendResetLink(array $credentials, ?Closure $callback = null) : string
+    public function sendResetLink(#[\SensitiveParameter] array $credentials, ?Closure $callback = null) : string
     {
-        /**
-         * @var \App\Models\User
-         */
-        $user = $this->getUser($credentials);
+        return $this->timebox->call(function () use ($credentials, $callback) {
+            $user = $this->getUser($credentials);
 
-        if (! $user instanceof WebAuthnAuthenticatable) {
-            return static::INVALID_USER;
-        }
+            if (is_null($user) || ! $user instanceof WebAuthnAuthenticatable) {
+                return static::INVALID_USER;
+            }
 
-        if ($this->tokens->recentlyCreatedToken($user)) {
-            return static::RESET_THROTTLED;
-        }
+            if ($this->tokens->recentlyCreatedToken($user)) {
+                return static::RESET_THROTTLED;
+            }
 
-        $token = $this->tokens->create($user);
+            $token = $this->tokens->create($user);
 
-        if ($callback) {
-            $callback($user, $token); // @codeCoverageIgnore
-        } else {
-            $user->sendWebauthnRecoveryNotification($token);
-        }
+            if ($callback) {
+                $callback($user, $token); // @codeCoverageIgnore
+            } else {
+                $user->sendWebauthnRecoveryNotification($token);
+            }
 
-        Log::notice(sprintf('Webauthn recovery email sent to user ID #%s', $user->id));
+            Log::notice(sprintf('Webauthn recovery email sent to user ID #%s', $user->id));
 
-        return static::RESET_LINK_SENT;
+            return static::RESET_LINK_SENT;
+        }, $this->timeboxDuration);
     }
 
     /**
@@ -46,7 +45,7 @@ class WebauthnCredentialBroker extends PasswordBroker
      *
      * @return \Illuminate\Contracts\Auth\CanResetPassword|string
      */
-    public function reset(array $credentials, Closure $callback)
+    public function reset(#[\SensitiveParameter] array $credentials, Closure $callback)
     {
         $user = $this->validateReset($credentials);
 
