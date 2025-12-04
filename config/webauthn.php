@@ -2,11 +2,11 @@
 
 return [
 
-    'user_verification' => envUnlessEmpty('WEBAUTHN_USER_VERIFICATION', 'preferred'),
+    'user_verification' => envUnlessEmpty('WEBAUTHN_USER_VERIFICATION', 'preferred'), // TODO: Should be removed? no longer in laragear/webauthn config file
 
     /*
     |--------------------------------------------------------------------------
-    | Relaying Party
+    | Relying Party
     |--------------------------------------------------------------------------
     |
     | We will use your application information to inform the device who is the
@@ -16,9 +16,23 @@ return [
     */
 
     'relying_party' => [
-        'name' => envUnlessEmpty('WEBAUTHN_NAME', envUnlessEmpty('APP_NAME', '2FAuth')),
+        'name' => envUnlessEmpty('WEBAUTHN_NAME', config('app.name')),
         'id'   => envUnlessEmpty('WEBAUTHN_ID', null),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Origins
+    |--------------------------------------------------------------------------
+    |
+    | By default, only your application domain is used as a valid origin for
+    | all ceremonies. If you are using your app as a backend for an app or
+    | UI you may set additional origins to check against the ceremonies.
+    |
+    | For multiple origins, separate them using comma, like `foo,bar`.
+    */
+
+    'origins' => env('WEBAUTHN_ORIGINS'),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,6 +42,8 @@ return [
     | When making challenges your application needs to push at least 16 bytes
     | of randomness. Since we need to later check them, we'll also store the
     | bytes for a small amount of time inside this current request session.
+    |
+    | @see https://www.w3.org/TR/webauthn-2/#sctn-cryptographic-challenges
     |
     */
 

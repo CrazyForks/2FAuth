@@ -30,7 +30,7 @@ class SystemController extends Controller
         $infos['common']['Debug']        = var_export(config('app.debug'), true);
         $infos['common']['Cache driver'] = config('cache.default');
         $infos['common']['Log channel']  = config('logging.default');
-        $infos['common']['Log level']    = env('LOG_LEVEL');
+        $infos['common']['Log level']    = config('LOG_LEVEL');
         $infos['common']['DB driver']    = DB::getDriverName();
         // PHP info
         $infos['common']['PHP version']      = PHP_VERSION;

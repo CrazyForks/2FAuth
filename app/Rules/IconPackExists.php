@@ -15,7 +15,7 @@ class IconPackExists implements ValidationRule
     {
         try {
             $iconPacks      = Icons::getIconPacks();
-            $IconPackExists = $iconPacks->contains($value);
+            $IconPackExists = $iconPacks->contains('name', $value);
 
             if (! $IconPackExists) {
                 $fail('validation.IconPackExists')->translate();

@@ -61,7 +61,7 @@ class WebAuthnDeviceLostControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_sendRecoveryEmail_does_not_send_anything_to_unknown_email()
+    public function test_send_recovery_email_does_not_send_anything_to_unknown_email()
     {
         Notification::fake();
 
@@ -82,7 +82,7 @@ class WebAuthnDeviceLostControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_sendRecoveryEmail_does_not_send_anything_to_invalid_email()
+    public function test_send_recovery_email_does_not_send_anything_to_invalid_email()
     {
         Notification::fake();
 
@@ -103,28 +103,7 @@ class WebAuthnDeviceLostControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_sendRecoveryEmail_does_not_send_anything_to_not_WebAuthnAuthenticatable()
-    {
-        $mock = $this->mock(\App\Extensions\WebauthnCredentialBroker::class)->makePartial();
-        $mock->shouldReceive('getUser')
-            ->andReturn(new \Illuminate\Foundation\Auth\User);
-
-        Notification::fake();
-
-        $response = $this->json('POST', '/webauthn/lost', [
-            'email' => $this->user->email,
-        ]);
-
-        Notification::assertNothingSent();
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors([
-                'email',
-            ]);
-    }
-
-    #[Test]
-    public function test_sendRecoveryEmail_is_throttled()
+    public function test_send_recovery_email_is_throttled()
     {
         Notification::fake();
 

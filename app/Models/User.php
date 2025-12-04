@@ -29,12 +29,12 @@ use Laravel\Passport\HasApiTokens;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $last_seen_at
  * @property bool $is_admin
- * @property \Illuminate\Support\Collection<array-key,array-value> $preferences
+ * @property \Illuminate\Support\Collection<array-key,mixed> $preferences
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property-read int|null $clients_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Group[] $groups
  * @property-read int|null $groups_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<array-key,\Illuminate\Notifications\DatabaseNotification>|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  * @property-read int|null $tokens_count
@@ -85,7 +85,7 @@ class User extends Authenticatable implements HasLocalePreference, WebAuthnAuthe
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $fillable = [
         'name', 'email', 'password', 'oauth_id', 'oauth_provider',
@@ -94,7 +94,7 @@ class User extends Authenticatable implements HasLocalePreference, WebAuthnAuthe
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',

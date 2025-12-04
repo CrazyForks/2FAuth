@@ -6,7 +6,7 @@ use App\Services\IconStoreService;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \App\Services\IconStoreService\IconStoreService setDisk(string $diskName = 'icons')
+ * @method static \App\Services\IconStoreService setDisk(string $diskName = 'icons')
  * @method static bool usesDatabase()
  * @method static void setDatabaseReplication(bool $usesDatabase)
  * @method static string|null get(string $name)

@@ -34,7 +34,7 @@ class WebAuthnRegisterControllerTest extends FeatureTestCase
     #[Test]
     public function test_uses_attestation_with_fast_registration_request() : void
     {
-        Config::set('webauthn.user_verification', UserVerification::DISCOURAGED);
+        Config::set('webauthn.user_verification', UserVerification::Discouraged);
 
         $request = $this->mock(WebauthnAttestationRequest::class);
 
@@ -47,9 +47,9 @@ class WebAuthnRegisterControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_uses_attestation_with_secureRegistration_request() : void
+    public function test_uses_attestation_with_secure_registration_request() : void
     {
-        Config::set('webauthn.user_verification', UserVerification::REQUIRED);
+        Config::set('webauthn.user_verification', UserVerification::Required);
 
         $request = $this->mock(WebauthnAttestationRequest::class);
 

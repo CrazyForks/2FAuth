@@ -52,7 +52,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_allPreferences_returns_consistent_json_structure()
+    public function test_all_preferences_returns_consistent_json_structure()
     {
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('GET', '/api/v1/user/preferences')
@@ -63,7 +63,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_allPreferences_returns_preferences_with_default_config_values()
+    public function test_all_preferences_returns_preferences_with_default_config_values()
     {
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('GET', '/api/v1/user/preferences')
@@ -78,7 +78,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_allPreferences_returns_preferences_with_user_values()
+    public function test_all_preferences_returns_preferences_with_user_values()
     {
         $userPrefs = [];
 
@@ -89,6 +89,8 @@ class UserControllerTest extends FeatureTestCase
                 $userPrefs[$pref] = $value . '_';
             } elseif (is_bool($value)) {
                 $userPrefs[$pref] = ! $value;
+            } else {
+                $userPrefs[$pref] = '_';
             }
 
             $this->user['preferences->' . $pref] = $userPrefs[$pref];
@@ -109,7 +111,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_showPreference_returns_preference_with_default_config_value()
+    public function test_show_preference_returns_preference_with_default_config_value()
     {
         /**
          * @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable
@@ -127,7 +129,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_showPreference_returns_preference_with_locked_default_env_value()
+    public function test_show_preference_returns_preference_with_locked_default_env_value()
     {
         // See .env.testing which sets USERPREF_DEFAULT__THEME=light
         // while config/2fauth.php sets the default value to 'system'
@@ -148,7 +150,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_showPreference_returns_preference_with_custom_value()
+    public function test_show_preference_returns_preference_with_custom_value()
     {
         $showOtpAsDot                            = ! config('2fauth.preferences.showOtpAsDot');
         $this->user['preferences->showOtpAsDot'] = $showOtpAsDot;
@@ -163,7 +165,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_showPreference_for_missing_preference_returns_not_found()
+    public function test_show_preference_for_missing_preference_returns_not_found()
     {
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('GET', '/api/v1/user/preferences/unknown')
@@ -171,7 +173,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_setPreference_returns_updated_preference()
+    public function test_set_preference_returns_updated_preference()
     {
         /**
          * @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable
@@ -193,7 +195,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_setPreference_for_missing_preference_returns_not_found()
+    public function test_set_preference_for_missing_preference_returns_not_found()
     {
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('PUT', '/api/v1/user/preferences/unknown', [
@@ -204,7 +206,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_setPreference_with_invalid_data_returns_validation_error()
+    public function test_set_preference_with_invalid_data_returns_validation_error()
     {
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('PUT', '/api/v1/user/preferences/showOtpAsDot', [
@@ -215,7 +217,7 @@ class UserControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_setPreference_on_locked_preference_returns_forbidden()
+    public function test_set_preference_on_locked_preference_returns_forbidden()
     {
         // See .env.testing which sets USERPREF_LOCKED__THEME=true
         $response = $this->actingAs($this->user, 'api-guard')

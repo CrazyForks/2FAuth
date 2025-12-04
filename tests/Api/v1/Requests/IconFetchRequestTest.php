@@ -5,10 +5,12 @@ namespace Tests\Api\v1\Requests;
 use App\Api\v1\Requests\IconFetchRequest;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Data\OtpTestData;
 use Tests\TestCase;
 
 /**
@@ -35,6 +37,10 @@ class IconFetchRequestTest extends TestCase
     #[DataProvider('provideValidData')]
     public function test_valid_data(array $data) : void
     {
+        Storage::fake('iconPacks');
+        Storage::disk('iconPacks')->put('myIconPack/' . OtpTestData::ICON_SVG, OtpTestData::ICON_SVG_DATA);
+        Storage::disk('iconPacks')->put('myIconPack/SubFolder/' . OtpTestData::ICON_SVG, OtpTestData::ICON_SVG_DATA);
+
         $request = new IconFetchRequest;
         $request->merge($data);
 

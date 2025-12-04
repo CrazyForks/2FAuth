@@ -43,10 +43,10 @@ class WebAuthnLoginController extends Controller
     public function options(AssertionRequest $request) : Responsable|JsonResponse
     {
         switch (config('webauthn.user_verification')) {
-            case UserVerification::DISCOURAGED:
+            case UserVerification::Discouraged:
                 $request = $request->fastLogin();    // Makes the authenticator to only check for user presence on registration
                 break;
-            case UserVerification::REQUIRED:
+            case UserVerification::Required:
                 $request = $request->secureLogin();  // Makes the authenticator to always verify the user thoroughly on registration
                 break;
         }
@@ -74,8 +74,7 @@ class WebAuthnLoginController extends Controller
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
-        if (method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)) {
+        if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
 
             Log::notice(sprintf(
