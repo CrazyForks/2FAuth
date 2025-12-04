@@ -49,6 +49,7 @@ class TwoFAccountModelTest extends FeatureTestCase
 
         Storage::fake('imagesLink');
         Storage::fake('icons');
+        Storage::fake('temp');
 
         Http::preventStrayRequests();
 
@@ -224,7 +225,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fill_with_invalid_uri_returns_ValidationException()
+    public function test_fill_with_invalid_uri_returns_validation_exception()
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $twofaccount = new TwoFAccount;
@@ -232,7 +233,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fill_with_invalid_uri_with_mismatching_issuer_returns_ValidationException()
+    public function test_fill_with_invalid_uri_with_mismatching_issuer_returns_validation_exception()
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $twofaccount = new TwoFAccount;
@@ -240,7 +241,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fill_with_uri_without_label_returns_ValidationException()
+    public function test_fill_with_uri_without_label_returns_validation_exception()
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $twofaccount = new TwoFAccount;
@@ -248,7 +249,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fill_with_getOfficialIcons_On_fetches_icon_using_Icons_facade()
+    public function test_fill_with_getofficialicons_on_fetches_icon_using_icons_facade()
     {
         $this->user['preferences->getOfficialIcons'] = true;
         $this->user->save();
@@ -263,7 +264,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fill_with_getOfficialIcons_Off_skips_icon_fetching()
+    public function test_fill_with_getofficialicons_off_skips_icon_fetching()
     {
         // Set the getOfficialIcons preference Off
         $this->user['preferences->getOfficialIcons'] = false;
@@ -370,7 +371,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_create_from_unsupported_parameters_returns_unsupportedOtpTypeException()
+    public function test_create_from_unsupported_parameters_returns_unsupported_otp_type_exception()
     {
         $this->expectException(\App\Exceptions\UnsupportedOtpTypeException::class);
         $twofaccount = new TwoFAccount;
@@ -378,7 +379,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_create_from_invalid_parameters_type_returns_InvalidOtpParameterException()
+    public function test_create_from_invalid_parameters_type_returns_invalid_otp_parameter_exception()
     {
         $this->expectException(\App\Exceptions\InvalidOtpParameterException::class);
         $twofaccount = new TwoFAccount;
@@ -390,7 +391,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_create_from_invalid_parameters_returns_InvalidOtpParameterException()
+    public function test_create_from_invalid_parameters_returns_invalid_otp_parameter_exception()
     {
         $this->expectException(\App\Exceptions\InvalidOtpParameterException::class);
         $twofaccount = new TwoFAccount;
@@ -458,7 +459,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getOTP_for_totp_returns_the_same_password()
+    public function test_getotp_for_totp_returns_the_same_password()
     {
         Http::fake([
             OtpTestData::EXTERNAL_IMAGE_URL_DECODED => Http::response(HttpRequestTestData::ICON_PNG, 200),
@@ -482,7 +483,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getOTP_for_hotp_returns_the_same_password()
+    public function test_getotp_for_hotp_returns_the_same_password()
     {
         Http::fake([
             OtpTestData::EXTERNAL_IMAGE_URL_DECODED => Http::response(HttpRequestTestData::ICON_PNG, 200),
@@ -501,7 +502,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getOTP_for_steamtotp_returns_the_same_password()
+    public function test_getotp_for_steamtotp_returns_the_same_password()
     {
         $twofaccount = new TwoFAccount;
 
@@ -521,7 +522,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getOTP_for_totp_with_invalid_secret_returns_InvalidSecretException()
+    public function test_getotp_for_totp_with_invalid_secret_returns_invalid_secret_exception()
     {
         $twofaccount = new TwoFAccount;
 
@@ -530,7 +531,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getOTP_for_totp_with_undecipherable_secret_returns_UndecipherableException()
+    public function test_getotp_for_totp_with_undecipherable_secret_returns_undecipherable_exception()
     {
         $twofaccount = new TwoFAccount;
 
@@ -543,7 +544,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getURI_for_custom_totp_model_returns_uri()
+    public function test_geturi_for_custom_totp_model_returns_uri()
     {
         $uri = $this->customTotpTwofaccount->getURI();
 
@@ -557,7 +558,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_getURI_for_custom_hotp_model_returns_uri()
+    public function test_geturi_for_custom_hotp_model_returns_uri()
     {
         $uri = $this->customHotpTwofaccount->getURI();
 
@@ -585,7 +586,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fillWithURI_uses_Icons_facade_to_get_the_icon()
+    public function test_fillwithuri_uses_icons_facade_to_get_the_icon()
     {
         Icons::shouldReceive('buildFromRemoteImage')
             ->once()
@@ -666,7 +667,7 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_scopeOrphans_retreives_accounts_without_owner()
+    public function test_scope_orphans_retreives_accounts_without_owner()
     {
         Http::fake([
             OtpTestData::EXTERNAL_IMAGE_URL_DECODED => Http::response(HttpRequestTestData::ICON_PNG, 200),
