@@ -36,6 +36,7 @@ class IconControllerTest extends FeatureTestCase
         Storage::fake('icons');
         Storage::fake('iconPacks');
         Storage::fake('logos');
+        Storage::fake('temp');
 
         Http::preventStrayRequests();
         Http::fake([
@@ -164,6 +165,13 @@ class IconControllerTest extends FeatureTestCase
                 'iconCollection' => 'not_a_valid_icon_collection',
             ])
             ->assertStatus(422);
+
+        $response = $this->actingAs($this->user, 'api-guard')
+            ->json('POST', '/api/v1/icons/default', [
+                'service'  => 'service',
+                'iconPack' => 'not_a_valid_icon_pack',
+            ])
+            ->assertStatus(422);
     }
 
     #[Test]
@@ -219,6 +227,8 @@ class IconControllerTest extends FeatureTestCase
     #[Test]
     public function test_fetch_unknown_logo_in_iconpack_returns_nothing()
     {
+        Storage::disk('iconPacks')->put('packDir/' . OtpTestData::ICON_SVG, OtpTestData::ICON_SVG_DATA);
+
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('POST', '/api/v1/icons/default', [
                 'service'  => 'NameOfAnUnknownServiceForSure',

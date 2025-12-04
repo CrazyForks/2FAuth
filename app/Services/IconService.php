@@ -128,7 +128,11 @@ class IconService
     {
         Storage::disk('temp')->put($filename, $content);
         $extension = Str::replace('jpg', 'jpeg', pathinfo($filename, PATHINFO_EXTENSION), false);
-        $mimeType  = Storage::mimeType(Storage::disk('temp')->path($filename));
+
+        /**
+         * @disregard P1013 Undefined method
+         */
+        $mimeType = Storage::disk('temp')->mimeType($filename);
 
         $isValid = self::IsSupportedMimeType($mimeType)
             && ($mimeType !== 'image/svg+xml' ? self::IsImage(Storage::disk('temp')->path($filename)) : true)
@@ -156,7 +160,10 @@ class IconService
             }
 
             foreach ($files as $file) {
-                $mimeType = Storage::mimeType(Storage::disk('iconPacks')->path($file));
+                /**
+                 * @disregard P1013 Undefined method
+                 */
+                $mimeType = Storage::disk('iconPacks')->mimeType($file);
                 $isImage  = $mimeType !== 'image/svg+xml'
                     ? self::IsImage(Storage::disk('iconPacks')->path($file))
                     : true;
