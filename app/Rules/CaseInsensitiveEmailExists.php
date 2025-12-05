@@ -14,7 +14,7 @@ class CaseInsensitiveEmailExists implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail) : void
     {
         $user = DB::table('users')
-            ->whereRaw('email = ?' . (config('database.default') === 'sqlite' ? ' COLLATE NOCASE' : ''), [strtolower($value)])
+            ->whereRaw('email = ?' . (DB::connection()->getDriverName() === 'sqlite' ? ' COLLATE NOCASE' : ''), [strtolower($value)])
             ->first();
 
         if (! $user) {

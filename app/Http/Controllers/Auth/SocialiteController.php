@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -53,17 +54,27 @@ class SocialiteController extends Controller
         }
 
         $uniqueName     = $socialiteUser->getId() . '@' . $driver;
-        $socialiteEmail = $socialiteUser->getEmail() ?? $uniqueName;
+        $socialiteEmail = strtolower($socialiteUser->getEmail() ?? $uniqueName);
         $socialiteName  = ($socialiteUser->getNickname() ?? $socialiteUser->getName()) . ' (' . $uniqueName . ')';
+        $oauthId        = strtolower($socialiteUser->getId());
 
-        /** @var User|null $user */
-        $user = User::firstOrNew([
-            'oauth_id'       => $socialiteUser->getId(),
-            'oauth_provider' => $driver,
-        ]);
+        // SQLite requires case insensitive collation for comparisons
+        $user = (DB::connection()->getDriverName() === 'sqlite')
+            ? User::whereRaw('oauth_id = ? COLLATE NOCASE', [$oauthId])
+                ->whereRaw('oauth_provider = ? COLLATE NOCASE', [$driver])
+                ->first() ?? new User([
+                    'oauth_id'       => $socialiteUser->getId(),
+                    'oauth_provider' => $driver,
+                ])
+            : User::firstOrNew([
+                'oauth_id'       => $socialiteUser->getId(),
+                'oauth_provider' => $driver,
+            ]);
 
         if (! $user->exists) {
-            if (User::where('email', $socialiteEmail)->exists()) {
+            if (DB::table('users')
+                ->whereRaw('email = ?' . (DB::connection()->getDriverName() === 'sqlite' ? ' COLLATE NOCASE' : ''), [$socialiteEmail])
+                ->exists()) {
                 return redirect('/error?err=sso_email_already_used');
             } elseif (User::count() === 0) {
                 $user->promoteToAdministrator();
