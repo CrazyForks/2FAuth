@@ -107,7 +107,7 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'key' => str_starts_with(env('APP_KEY')??'', 'base64:') ? env('APP_KEY') : substr(env('APP_KEY')??'', 0, 32),
+    'key' => trimAppKey(envUnlessEmpty('APP_KEY_FILE', env('APP_KEY'))),
 
     'previous_keys' => [
         ...array_filter(
