@@ -46,28 +46,28 @@ COPY --from=supervisord --chown=${UID}:${GID} /bin /usr/local/bin/supervisord
 # Install PHP and PHP system dependencies
 RUN apk add --update --no-cache \
     # PHP
-    php83 \
+    php84 \
     # Composer dependencies
-    php83-phar \
+    php84-phar \
     # PHP SQLite, MySQL/MariaDB & Postgres drivers
-    php83-pdo_sqlite php83-sqlite3 php83-pdo_mysql php83-pdo_pgsql php83-pgsql \
+    php84-pdo_sqlite php84-sqlite3 php84-pdo_mysql php84-pdo_pgsql php84-pgsql \
     # PHP extensions
-    php83-xml php83-gd php83-mbstring php83-tokenizer php83-fileinfo php83-bcmath php83-ctype php83-dom php-redis \
+    php84-xml php84-gd php84-mbstring php84-tokenizer php84-fileinfo php84-bcmath php84-ctype php84-dom php-redis \
     # Runtime dependencies
-    php83-session php83-openssl \
+    php84-session php84-openssl \
     # Nginx and PHP FPM to serve over HTTP
-    php83-fpm nginx
+    php84-fpm nginx
 
 # PHP FPM configuration
 # Change username and ownership in php-fpm pool config
-RUN sed -i '/user = nobody/d' /etc/php83/php-fpm.d/www.conf && \
-    sed -i '/group = nobody/d' /etc/php83/php-fpm.d/www.conf && \
-    sed -i '/listen.owner/d' /etc/php83/php-fpm.d/www.conf && \
-    sed -i '/listen.group/d' /etc/php83/php-fpm.d/www.conf
+RUN sed -i '/user = nobody/d' /etc/php84/php-fpm.d/www.conf && \
+    sed -i '/group = nobody/d' /etc/php84/php-fpm.d/www.conf && \
+    sed -i '/listen.owner/d' /etc/php84/php-fpm.d/www.conf && \
+    sed -i '/listen.group/d' /etc/php84/php-fpm.d/www.conf
 # Pre-create files with the correct permissions
 RUN mkdir /run/php && \
-    chown ${UID}:${GID} /run/php /var/log/php83 && \
-    chmod 700 /run/php /var/log/php83
+    chown ${UID}:${GID} /run/php /var/log/php84 && \
+    chmod 700 /run/php /var/log/php84
 
 # NGINX
 # Clean up
