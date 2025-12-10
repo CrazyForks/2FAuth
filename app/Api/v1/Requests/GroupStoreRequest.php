@@ -45,7 +45,7 @@ class GroupStoreRequest extends FormRequest
     {
         return [
             'name.not_in' => __('error.reserved_name_please_choose_something_else'),
-            'name.regex' => __('error.accepted_char_for_group_name'),
+            'name.regex'  => __('error.accepted_char_for_group_name'),
         ];
     }
 }

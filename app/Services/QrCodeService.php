@@ -70,7 +70,7 @@ class QrCodeService
         }
 
         $data = $text;
-        if (!MigratorFactory::isGoogleAuth($text)) {
+        if (! MigratorFactory::isGoogleAuth($text)) {
             $data = urldecode($text);
         }
 

@@ -7,7 +7,6 @@ use App\Models\TwoFAccount;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class BitwardenMigrator extends Migrator
 {
@@ -100,22 +99,19 @@ class BitwardenMigrator extends Migrator
             if ($isSteam = str_starts_with($uri, 'steam://')) {
                 $parameters['otp_type'] = TwoFAccount::STEAM_TOTP;
                 $parameters['secret']   = str_replace('steam://', '', $uri);
-            }
-            else {
-                $parameters['otp_type']  = TwoFAccount::TOTP;
+            } else {
+                $parameters['otp_type'] = TwoFAccount::TOTP;
             }
 
             $parameters['service'] = $otp_parameters['name'];
-            $parameters['account']   = $otp_parameters['login']['username'] ?? $parameters['service'];
-            
+            $parameters['account'] = $otp_parameters['login']['username'] ?? $parameters['service'];
+
             try {
                 $twofaccounts[$key] = new TwoFAccount;
 
-                if ($isSteam)
-                {
+                if ($isSteam) {
                     $twofaccounts[$key]->fillWithOtpParameters($parameters);
-                }
-                else {
+                } else {
                     $twofaccounts[$key]->fillWithURI($uri);
 
                     // We override uri parameters with json explicit values in case the uri
