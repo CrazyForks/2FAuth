@@ -34,7 +34,7 @@ class WebauthnCredentialBroker extends PasswordBroker
                 $user->sendWebauthnRecoveryNotification($token);
             }
 
-            Log::notice(sprintf('Webauthn recovery email sent to user ID #%s', $user->id));
+            Log::notice(sprintf('Webauthn recovery email sent to user ID #%s', $user->id)); /** @phpstan-ignore-line */
 
             return static::RESET_LINK_SENT;
         }, $this->timeboxDuration);
