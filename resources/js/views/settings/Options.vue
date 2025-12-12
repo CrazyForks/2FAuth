@@ -152,6 +152,10 @@
             }
         }
 
+        if (preference === 'rememberActiveGroup' && value === false && user.preferences.activeGroup != 0) {
+            userService.updatePreference('activeGroup', 0)
+        }
+
         userService.updatePreference(preference, value).then(response => {
             // if (showNotification) {
                 useNotify().success({ text: t('notification.setting_saved') })
