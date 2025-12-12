@@ -83,7 +83,7 @@
     "error.accepted_char_for_group_name": "Please only use letters, numbers, dashes, underscores, spaces or single quotation marks",
     "error.resource_not_found": "リソースが見つかりません",
     "error.security_device_already_registered": "デバイスは既に登録済みです",
-    "error.security_error_check_rpid": "セキュリティエラー<br/>WEBAUTHN_ID 環境変数を確認してください",
+    "error.security_error_check_rpid": "セキュリティエラー: WEBAUTHN_ID 環境変数を確認してください",
     "error.something_wrong_with_server": "サーバーに問題が発生しました",
     "error.spaces_are_ignored": "不要なスペースは自動的に削除されます",
     "error.sso_bad_provider_setup": "このSSOプロバイダの .env ファイル設定が不完全です",
