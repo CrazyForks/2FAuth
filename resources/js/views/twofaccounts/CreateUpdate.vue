@@ -403,6 +403,7 @@
             // Then the otp described by the uri
             twofaccountService.preview(uri.value, { returnError: true }).then(response => {
                 form.fill(response.data)
+                form.group_id = 0 // group_id is not in the response payload
                 tempIcon.value = response.data.icon ? response.data.icon : null
             })
             .catch(error => {
