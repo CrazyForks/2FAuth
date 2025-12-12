@@ -99,6 +99,7 @@
     const showOtpInModal = ref(false)
     const showAdvancedForm = ref(false)
     const ShowTwofaccountInModal = ref(false)
+    const showSpinner = ref(false)
     const fetchingLogo = ref(false)
     const iconCollection = ref(user.preferences.iconCollection)
     const iconCollectionVariant = ref(user.preferences.iconVariant)
@@ -144,6 +145,7 @@
             // The Start|Capture view provided an uri via the bus store.
             uri.value = bus.decodedUri
             bus.decodedUri = null
+            showSpinner.value = true
 
             if (user.preferences.AutoSaveQrcodedAccount) {
                 // The user wants the account to be saved automatically.
@@ -156,6 +158,9 @@
                         showAlternatives.value = true
                         showAdvancedForm.value = true
                     }
+                })
+                .finally(() => {
+                    showSpinner.value = false
                 })
             }
             else {
@@ -173,6 +178,9 @@
                         showAlternatives.value = true
                         showAdvancedForm.value = true
                     }
+                })
+                .finally(() => {
+                    showSpinner.value = false
                 })
             }
         } else {
@@ -697,6 +705,9 @@
                 />
             </Modal>
         </FormWrapper>
+        <div v-if="showSpinner">
+            <Spinner :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
+        </div>
         <!-- alternatives -->
         <Modal v-model="showAlternatives">
             <QrContentDisplay :qrContent="uri" />
