@@ -54,7 +54,7 @@ if [ -f /2fauth/installed ]; then
     php artisan migrate --force
   fi
 else
-  php artisan migrate:refresh --force
+  php artisan migrate:fresh --force
   php artisan passport:install --no-interaction
 fi
 
