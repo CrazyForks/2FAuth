@@ -113,7 +113,7 @@ ENV \
     LOG_LEVEL=info \
     DB_CONNECTION=sqlite \
     DB_DATABASE="/srv/database/database.sqlite" \
-    WEBAUTHN_NAME=2FAuth \
+    WEBAUTHN_NAME=2FAuth
 
 ARG VERSION=unknown
 ARG CREATED="an unknown date"
