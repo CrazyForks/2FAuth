@@ -3,6 +3,7 @@
 use App\Models\TwoFAccount;
 use App\Services\SettingService;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
