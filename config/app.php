@@ -107,7 +107,7 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'key' => trimAppKey(envUnlessEmpty('APP_KEY_FILE', env('APP_KEY'))),
+    'key' => trimAppKey(env('APP_KEY')),
 
     'previous_keys' => [
         ...array_filter(
