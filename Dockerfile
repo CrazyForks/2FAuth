@@ -101,7 +101,7 @@ COPY --from=vendor --chown=${UID}:${GID} /srv/vendor /srv/vendor
 
 # Copy the rest of the code
 COPY --chown=${UID}:${GID} . .
-# RUN composer dump-autoload --no-scripts --no-dev --optimize
+RUN composer dump-autoload --no-scripts --no-dev --optimize
 
 # Entrypoint
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
