@@ -1,5 +1,83 @@
 # Change log
 
+## [6.0.0] - 2025-12-05
+
+2FAuth’s (not so) Major Update is Here!
+
+The project keeps moving forward gently but surely, as it always has. This major version introduces a lot of changes under the hood, and although the change log isn't that ridiculous (with a nice addition over icon packs, see below), there isn’t much to get excited about (Sorry folks, sharing is not yet available).
+
+### A Unified Foundation for Web and Browser Extension
+
+One of the biggest changes in this release is the complete restructuring of the codebase for both the web app and browser extension. Both frontends now share a common set of Vue.js components, making them more consistent and much easier to maintain and evolve. This architectural shift is why I’ve bumped the version number—it’s a major step forward.
+
+I’ve done my best to avoid regressions, but with changes this extensive and despite all my tests, there’s always a risk some features might not behave as expected, even if they were stable before. If you notice anything amiss, please let me know by opening an issue.
+
+If you are participating in translating 2FAuth, you have probably received notification about a significant number of new translations. This is because I changed how translations are organized through files, there is now only one file per locale. I apologize for the additional workload this entails, but I couldn't avoid it. Hopefully, thanks to Crowdin's history feature, restoring your previous translations will be relatively quick. This is by the way a good opportunity to correct or complete them.
+
+### A Fresh Look with Lucide Icons
+
+You’ll notice a subtle refresh to the web app’s interface. Just like the ones in the browser extension, all icons now come from the [lucide.dev](https://lucide.dev/) collection. This brings a touch of freshness and modernity to the application without changing it too much, as the Lucide collection is quite similar to FontAwesome, which was previously used.
+
+### Important notices
+
+> [!WARNING]
+> **Possible `APP_KEY` issue with Docker**  
+> For security reasons, the Docker image is no longer built with the `APP_KEY` environment variable included.
+> If you never set your own `APP_KEY` var, i.e. via Docker-Compose or the Docker run `-e` argument, your 2FAuth instance relies on the former default value `SomeRandomStringOf32CharsExactly`. Since the environment variable is no longer set at build time, you may experience a container startup error, followed by decryption issues or invalid access tokens.
+>
+> **How to fix**  
+> First, set `APP_KEY` with a personal unique value ([How to](https://docs.2fauth.app/getting-started/config/env-vars/#how-to)). You can generate one using [Laravel Encryption Key Generator](https://laravel-encryption-key-generator.vercel.app/).  
+> Next, set the `APP_PREVIOUS_KEYS` env var with the former default value, like so: `APP_PREVIOUS_KEYS=SomeRandomStringOf32CharsExactly`.  
+> Finally, restart your container.
+>
+> **Updating protected data**  
+> Setting up `APP_PREVIOUS_KEYS` will not update the encryption of protected DB records or personal tokens. You will have to disable data encryption at *Admin Panel > Security*, and enable it back for the new encryption key to be used. Existing tokens should be revoked.
+>
+> **Remember to back up your database before making any changes.**
+
+And last but not least:
+
+> [!WARNING]
+> This version drops PHP 8.3 support
+
+---
+
+### Added
+
+- 2FAuth can now fetch icons from offline icon packs. Visit the new [Icon documentation page](https://docs.2fauth.app/usage/icons) to learn how to set them up ([#203](https://github.com/Bubka/2FAuth/issues/203)).
+- The sort order of 2FA accounts is saved to user preferences when changed from the Manage mode. This allows the account list to be reordered automatically after a new account is registered. ([#377](https://github.com/Bubka/2FAuth/issues/377)).
+- Groups can be reordered (manually, from the Group management view) ([#419](https://github.com/Bubka/2FAuth/issues/419)).
+- A new filter is available to only show 2FA accounts that do not belong to any group ([#430](https://github.com/Bubka/2FAuth/issues/430)).
+- The Import feature now supports Bitwarden export ([#501](https://github.com/Bubka/2FAuth/issues/501)).
+
+#### New env vars
+
+- `APP_KEY_FILE`: Suffixed version of the `APP_KEY` environment variable to be used in conjunction with a docker secret ([doc](https://docs.2fauth.app/getting-started/config/env-vars/#app_key_file)).
+- `APP_PREVIOUS_KEYS`: Lists all application's former encryption keys to ensure data decryption after a key rotation ([doc](https://docs.2fauth.app/getting-started/getting-started/config/env-vars/#app_previous_keys)).
+
+### Changed
+
+- [PR #366](https://github.com/Bubka/2FAuth/pull/366) Separate env variables to a separate env file for docker compose, thanks to [@sinipelto](https://github.com/sinipelto)
+- Group names now accept single quote ([#465](https://github.com/Bubka/2FAuth/issues/465)).
+- Upon logging out, users are now redirected to the last login form they used: Password, SSO or Webauthn. ([#478](https://github.com/Bubka/2FAuth/issues/478)).
+- Catchable errors that occur during the sending of a test email are now displayed in the UI to help you understand what's going on.
+
+### Fixed
+
+- [issue #447](https://github.com/Bubka/2FAuth/issues/447) Unable to import Google Authenticator.
+- [issue #464](https://github.com/Bubka/2FAuth/issues/464) Import error not correctly reported in the GUI.
+- [issue #481](https://github.com/Bubka/2FAuth/issues/481) HASH_DRIVER not working with argon with OID.
+- [issue #495](https://github.com/Bubka/2FAuth/issues/495) 2FA.directory polluted by selfho.st call.
+- [issue #508](https://github.com/Bubka/2FAuth/issues/508) OpenID from new browser doesn't work - Email address already exists.
+- Remaining loader after 422 response on login request.
+- Missing Group selection in the advanced form after a QR code upload.
+- Disabling the *Remember active group* user preference could lead to always returning to the last memorized group
+
+### API [1.9.0]
+
+- `/api/v1/icons/packs` GET path added ([doc](https://docs.2fauth.app/resources/rapidoc.html#get-/api/v1/icons/packs)).
+- `/api/v1/groups/reorder` POST path added ([doc](https://docs.2fauth.app/resources/rapidoc.html#post-/api/v1/groups/reorder)).
+
 ## [5.6.1] - 2025-11-21
 
 ### Fixed
@@ -14,7 +92,7 @@ The shared components are ready, as is a new version of the web extension that m
 
 ### Added
 
-- The _Get official icon_ feature now includes two new icon providers, [selfh.st](https://selfh.st/icons/) and [dashboardicons.com](https://dashboardicons.com/), as well as the ability to select a preferred variant or to switch between providers directly from the Advanced form. ([#475](https://github.com/Bubka/2FAuth/issues/475)).
+- The *Get official icon* feature now includes two new icon providers, [selfh.st](https://selfh.st/icons/) and [dashboardicons.com](https://dashboardicons.com/), as well as the ability to select a preferred variant or to switch between providers directly from the Advanced form. ([#475](https://github.com/Bubka/2FAuth/issues/475)).
 
 #### New env vars
 
@@ -22,7 +100,7 @@ The shared components are ready, as is a new version of the web extension that m
 
 ### Changed
 
-- Personal Access Token (PAT) can be used when authentication is restricted to SSO only. This is particularly useful when you want to use the 2FAuth web extension. Check out the new _Allow PAT usage_ setting in the Admin > Auth > SSO section ([#474](https://github.com/Bubka/2FAuth/issues/474)).
+- Personal Access Token (PAT) can be used when authentication is restricted to SSO only. This is particularly useful when you want to use the 2FAuth web extension. Check out the new *Allow PAT usage* setting in the Admin > Auth > SSO section ([#474](https://github.com/Bubka/2FAuth/issues/474)).
 
 ### Fixed
 
@@ -43,7 +121,7 @@ The shared components are ready, as is a new version of the web extension that m
 
 ### Changed
 
-- The _Show next OTP_ user preference is enabled by default
+- The *Show next OTP* user preference is enabled by default
 
 ### Fixed
 
@@ -85,7 +163,7 @@ Feedback and bug reports (in this repository please) are very welcome.
 
 - [issue #438](https://github.com/Bubka/2FAuth/issues/438) Sorting not working if "Service" is null
 - [issue #458](https://github.com/Bubka/2FAuth/issues/458) The `/up` route no longer creates sessions
-- [issue #462](https://github.com/Bubka/2FAuth/issues/462) The check for new versions is no longer triggered whereas the _Check for new version_ setting is disabled
+- [issue #462](https://github.com/Bubka/2FAuth/issues/462) The check for new versions is no longer triggered whereas the *Check for new version* setting is disabled
 - [PR #455](https://github.com/Bubka/2FAuth/pull/455) Logo size overflow, by [@BitSleek](https://github.com/BitSleek)
 - Multiple Race Condition in Group Management Feature. Credits to [@bugdiscole](https://github.com/bugdisclose)
 
@@ -128,11 +206,11 @@ Feedback and bug reports (in this repository please) are very welcome.
 
 ### Changed
 
-- The links in the footer (Settings, [Admin,] Sign out) have been replaced by the email address of the logged in user. Clicking on this email shows a navigation menu containing the links that were previously visible in the footer. The former display is still available if you don't like the new one, just uncheck the new _Show email in footer_ user option in Settings. ([#404](https://github.com/Bubka/2FAuth/issues/404))
+- The links in the footer (Settings, [Admin,] Sign out) have been replaced by the email address of the logged in user. Clicking on this email shows a navigation menu containing the links that were previously visible in the footer. The former display is still available if you don't like the new one, just uncheck the new *Show email in footer* user option in Settings. ([#404](https://github.com/Bubka/2FAuth/issues/404))
 
 ### Added
 
-- Administrators can now configure 2FAuth to register 2FA icons in the database (see the new _Store icons to database_ setting in the admin panel). When enabled, existing icons in the local file system are automatically registered in the database. These files are retained and then used for caching purposes only. 2FAuth will automatically re-create cache files if they are missing, so you only have to consider the database when backing up your instance. When disabled, 2FAuth will check that all registered icons in the database have a corresponding local file before flushing out the db icons table. ([#364](https://github.com/Bubka/2FAuth/issues/364)).
+- Administrators can now configure 2FAuth to register 2FA icons in the database (see the new *Store icons to database* setting in the admin panel). When enabled, existing icons in the local file system are automatically registered in the database. These files are retained and then used for caching purposes only. 2FAuth will automatically re-create cache files if they are missing, so you only have to consider the database when backing up your instance. When disabled, 2FAuth will check that all registered icons in the database have a corresponding local file before flushing out the db icons table. ([#364](https://github.com/Bubka/2FAuth/issues/364)).
 - The ability to export 2FA accounts as a list of otpauth URIs ([#386](https://github.com/Bubka/2FAuth/issues/386)).
 
 ### Fixed
@@ -166,7 +244,7 @@ Feedback and bug reports (in this repository please) are very welcome.
 - A user preference to automatically register a 2FA account immediately after a QR code scan. When enabled, there is no need to click the Save button anymore to save the account to the database.
 - An admin setting to make SSO the only authentication method available (does not apply to admins). ([#368](https://github.com/Bubka/2FAuth/issues/368)).
 - The ability to assign a 2FA account to a specific group directly from the advanced form ([#372](https://github.com/Bubka/2FAuth/issues/372)).
-- A new _Auth_ tab in the admin panel to gather settings related to authentication
+- A new *Auth* tab in the admin panel to gather settings related to authentication
 - Proxy support for the OpenID connector (using `PROXY_FOR_OUTGOING_REQUESTS`), thanks to [@rstefko](https://github.com/rstefko) ([PR #367](https://github.com/Bubka/2FAuth/pull/367))
 
 #### New env vars
@@ -209,13 +287,13 @@ Please refer to the [Configuration doc](https://docs.2fauth.app/getting-started/
 
 2FAuth v5.2 offers a new notification feature. Each user can now decide whether they want to receive an email after a successful login from a new device, or after a failed login.
 
-For now, both notifications are __disabled__ by default. Why this choice when this feature increases security? Because if the email configuration of your 2FAuth instance is not set up correctly, such login attempts will take a while (until all email sending attempts have failed).
+For now, both notifications are **disabled** by default. Why this choice when this feature increases security? Because if the email configuration of your 2FAuth instance is not set up correctly, such login attempts will take a while (until all email sending attempts have failed).
 
 If you never set up email sending on your instance, do it. It is the only way to recover your account, whether you use a password or a passkey to authenticate. To help you in this task, all required environment variables are described [here](https://docs.2fauth.app/getting-started/configuration/#email-setting). Since v5.1, administrators also have access to a test email button to validate the email configuration from the UI.
 
 Notifications will be enabled by default in a future version.
 
-Last but not least :
+Last but not least:
 
 ⚠️ This version drops PHP 8.1 support ⚠️
 
@@ -380,7 +458,7 @@ v5 also comes with the following.
 
 ---
 
-__Full Changelog__: [v4.2.4...v5.0.0](https://github.com/Bubka/2FAuth/compare/v4.2.4...v5.0.0)
+**Full Changelog**: [v4.2.4...v5.0.0](https://github.com/Bubka/2FAuth/compare/v4.2.4...v5.0.0)
 
 ## [4.2.4] - 2023-11-21
 
@@ -421,7 +499,7 @@ __Full Changelog__: [v4.2.4...v5.0.0](https://github.com/Bubka/2FAuth/compare/v4
 
 ### Changed
 
-- Navigation with the __Back__ and __Close__ buttons is now fully consistent with their labeling, even when browsing back through successive views using those buttons.
+- Navigation with the **Back** and **Close** buttons is now fully consistent with their labeling, even when browsing back through successive views using those buttons.
 - The length of the email submitted during registration is now limited to 191 characters ([#214](https://github.com/Bubka/2FAuth/issues/214)).
 - Upgrade to Laravel 10
 
@@ -432,15 +510,15 @@ __Full Changelog__: [v4.2.4...v5.0.0](https://github.com/Bubka/2FAuth/compare/v4
 
 ---
 
-__Full Changelog__: [v4.1.0...v4.2.0](https://github.com/Bubka/2FAuth/compare/v4.1.0...v4.2.0)
+**Full Changelog**: [v4.1.0...v4.2.0](https://github.com/Bubka/2FAuth/compare/v4.1.0...v4.2.0)
 
 ## [4.1.0] - 2023-07-07
 
 This new version introduces a very common feature in the 2FA app world, the automatic generation and display of passwords.
 
-Since the very beginning, 2FAuth offers an _Open, Click & Get one password_ behavior, this is one of the main reasons why I created it. But this can be very troublesome or frustrating for users migrating from other 2FA apps as almost all of them work with an _Open & Get passwords_ behavior, which is much more straightforward.
+Since the very beginning, 2FAuth offers an *Open, Click & Get one password* behavior, this is one of the main reasons why I created it. But this can be very troublesome or frustrating for users migrating from other 2FA apps as almost all of them work with an *Open & Get passwords* behavior, which is much more straightforward.
 
-So this is now only a user choice as 2FAuth offers both behaviors via a user preference. Obvisouly, the _Open, Click & Get one password_ behavior remains the default one.
+So this is now only a user choice as 2FAuth offers both behaviors via a user preference. Obvisouly, the *Open, Click & Get one password* behavior remains the default one.
 
 ### Added
 
@@ -457,7 +535,7 @@ So this is now only a user choice as 2FAuth offers both behaviors via a user pre
 
 ### Fixed
 
-- [issue #180](https://github.com/Bubka/2FAuth/issues/180) OTP does not rotate while _Close after copy_ and _Copy on display_ is activated - By [@josh-gaby](https://github.com/josh-gaby)
+- [issue #180](https://github.com/Bubka/2FAuth/issues/180) OTP does not rotate while *Close after copy* and *Copy on display* is activated - By [@josh-gaby](https://github.com/josh-gaby)
 - [issue #194](https://github.com/Bubka/2FAuth/issues/194) Container keeps trying to make connection to 172.67.161.186
 - [issue #134](https://github.com/Bubka/2FAuth/issues/134), [#143](https://github.com/Bubka/2FAuth/issues/143), [#147](https://github.com/Bubka/2FAuth/issues/147) Issue with some Microsoft 2FA
 - [issue #196](https://github.com/Bubka/2FAuth/issues/196) ERROR The [public/storage] link already exists
@@ -493,7 +571,7 @@ This version also comes with nice additions. A light theme, an export feature or
 
 ### Added
 
-- An Export feature (accessible via the _Manage_ view) that lets you download your 2FA data in a JSON migration file
+- An Export feature (accessible via the *Manage* view) that lets you download your 2FA data in a JSON migration file
 - The Import feature accepts the 2FAuth JSON file generated by the Export feature
 - Support of custom base URL. You can now install 2FAuth in a domain sub-directory, e.g `https://mydomain/2fauth/` (see [Docs](https://docs.2fauth.app/getting-started/installation/self-hosted-server//#subdirectory))
 - ctrl+F keyboard shortcut to focus on Search on the main view
@@ -504,7 +582,7 @@ This version also comes with nice additions. A light theme, an export feature or
 
 ⚠️ 2FAuth uses a new component to operate the WebAuthn authentication that cannot use existing registrations of your security devices. As a consequence, all your security devices will be revoked and the "Use Webauthn only" option will be disabled during the upgrade to avoid any issue and/or lockout. You will have to sign in using your email and password to re-register you security devices.
 
-- The _Manage_ view layout has been rearranged: The search bar remains and the action buttons now stand in the page footer
+- The *Manage* view layout has been rearranged: The search bar remains and the action buttons now stand in the page footer
 - Password formatting is now a user option available with 3 formats: Grouping digits by pair, by trio or by half
 - Failed login throttling and API calls throttling can be configured in the .env file
 - Logs give more information
@@ -579,12 +657,12 @@ The [docker image](https://hub.docker.com/r/2fauth/2fauth) has been upgraded as 
 ### Added
 
 - An option to fetch icons automatically from [2factorauth/twofactorauth](https://github.com/2factorauth/twofactorauth) ([#99](https://github.com/Bubka/2FAuth/issues/99))
-- An _About_ page, accessible from the footer ([#91](https://github.com/Bubka/2FAuth/issues/91))
+- An *About* page, accessible from the footer ([#91](https://github.com/Bubka/2FAuth/issues/91))
 - Alphabetical sorting feature ([#95](https://github.com/Bubka/2FAuth/issues/95))
 
 ### Changed
 
-- The footer is now visible everywhere to ease access to the _About_ page
+- The footer is now visible everywhere to ease access to the *About* page
 
 ### Fixed
 
@@ -607,7 +685,7 @@ The [docker image](https://hub.docker.com/r/2fauth/2fauth) has been upgraded as 
 ### Changed
 
 - Pages now have a unique title
-- Signing in while already authenticated no longer display the "_Already authenticated_" error message ([#88](https://github.com/Bubka/2FAuth/issues/88))
+- Signing in while already authenticated no longer display the "*Already authenticated*" error message ([#88](https://github.com/Bubka/2FAuth/issues/88))
 - The Auto lock feature now forwards to a dedicated page to ensure proper logout and prevent CSRF token mismatch error (see [issue #73](https://github.com/Bubka/2FAuth/issues/73)) that still occurred in certain situation
 
 ### Fixed
@@ -626,7 +704,7 @@ The [docker image](https://hub.docker.com/r/2fauth/2fauth) has been upgraded as 
 ### Added
 
 - `PROXY_LOGOUT_URL` environment variable to specify a custom logout url when using an auth proxy
-- Locked/Unlocked state for the _Secret_ field in the 2FA account Edit form to prevent undesirable edit.
+- Locked/Unlocked state for the *Secret* field in the 2FA account Edit form to prevent undesirable edit.
 
 ### Fixed
 
@@ -665,9 +743,9 @@ This is a milestone in the 2FAuth development that greatly enhances 2FAuth under
 ### New
 
 - 2FAuth now exposes a REST API following the OpenAPI 3.1 specification that allows connexion with third parties (see the [API doc](https://docs.2fauth.app/api/))
-- Support of the _Web Authentication_ standard, aka WebAuthn, to login using a security device like a Yubikey or FaceID
+- Support of the *Web Authentication* standard, aka WebAuthn, to login using a security device like a Yubikey or FaceID
 - Support of authentication proxy to bypass the 2FAuth auth login
-- Heroku setup to deploy 2FAuth using the _Deploy to Heroku_ button
+- Heroku setup to deploy 2FAuth using the *Deploy to Heroku* button
 
 #### Also added
 
