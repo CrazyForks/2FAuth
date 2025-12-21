@@ -45,6 +45,14 @@ nginx -v
 
 # Initialize env vars that might be stored in a file
 file_env APP_KEY
+file_env DB_DATABASE
+file_env DB_USERNAME
+file_env DB_PASSWORD
+file_env DB_HOST
+file_env MAIL_USERNAME
+file_env MAIL_PASSWORD
+file_env REDIS_PASSWORD
+
 
 # Database creation
 if [ "${DB_CONNECTION}" = "sqlite" ]; then
