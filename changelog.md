@@ -6,6 +6,8 @@
 
 The project keeps moving forward gently but surely, as it always has. This major version introduces a lot of changes under the hood, and although the change log isn't that ridiculous (with a nice addition over icon packs, see below), there isn’t much to get excited about (Sorry folks, sharing is not yet available).
 
+I wish I could have released this version earlier, but work has also kept me pretty busy. I hope the next version will come out faster.
+
 ### A Unified Foundation for Web and Browser Extension
 
 One of the biggest changes in this release is the complete restructuring of the codebase for both the web app and browser extension. Both frontends now share a common set of Vue.js components, making them more consistent and much easier to maintain and evolve. This architectural shift is why I’ve bumped the version number—it’s a major step forward.
