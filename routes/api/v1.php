@@ -47,10 +47,12 @@ Route::group(['middleware' => 'auth:api-guard'], function () {
 
     Route::get('groups/{group}/twofaccounts', [GroupController::class, 'accounts'])->name('groups.show.twofaccounts');
     Route::post('groups/{group}/assign', [GroupController::class, 'assignAccounts'])->name('groups.assign.twofaccounts');
+    Route::post('groups/reorder', [GroupController::class, 'reorder'])->name('groups.reorder');
     Route::apiResource('groups', GroupController::class);
 
     Route::post('qrcode/decode', [QrCodeController::class, 'decode'])->name('qrcode.decode');
 
+    Route::get('icons/packs', [IconController::class, 'iconPacks'])->name('icons.iconPacks');
     Route::post('icons/default', [IconController::class, 'fetch'])->name('icons.fetch');
     Route::post('icons', [IconController::class, 'upload'])->name('icons.upload');
     Route::delete('icons/{icon}', [IconController::class, 'delete'])->name('icons.delete');

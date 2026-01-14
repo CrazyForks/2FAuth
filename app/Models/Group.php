@@ -7,6 +7,8 @@ use Database\Factories\GroupFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Spatie\EloquentSortable\Sortable;
+use Spatie\EloquentSortable\SortableTrait;
 
 /**
  * App\Models\Group
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Log;
  * @property int $twofaccounts_count
  * @property int $id
  * @property string $name
+ * @property int|null $order_column
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int|null $user_id
@@ -34,31 +37,31 @@ use Illuminate\Support\Facades\Log;
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Group orphans()
  */
-class Group extends Model
+class Group extends Model implements Sortable
 {
     /**
      * @use HasFactory<GroupFactory>
      */
-    use HasFactory;
+    use HasFactory, SortableTrait;
 
     /**
      * model's array form.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = ['name'];
 
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $appends = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -99,6 +102,16 @@ class Group extends Model
     }
 
     /**
+     * Settings for @spatie/eloquent-sortable package
+     *
+     * @var array
+     */
+    public $sortable = [
+        'order_column_name'  => 'order_column',
+        'sort_when_creating' => true,
+    ];
+
+    /**
      * Retrieve the model for a bound value.
      *
      * @param  mixed  $value
@@ -112,7 +125,7 @@ class Group extends Model
         // resolution logic to return an instance instead of not found.
         if ($value === '0') {
             $group = new self([
-                'name' => __('commons.all'),
+                'name' => __('label.all'),
             ]);
             $group->id = 0;
 

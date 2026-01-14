@@ -2,12 +2,12 @@
 
 namespace App\Api\v1\Controllers;
 
+use App\Api\v1\Requests\ReorderRequest;
 use App\Api\v1\Requests\TwoFAccountBatchRequest;
 use App\Api\v1\Requests\TwoFAccountDynamicRequest;
 use App\Api\v1\Requests\TwoFAccountExportRequest;
 use App\Api\v1\Requests\TwoFAccountImportRequest;
 use App\Api\v1\Requests\TwoFAccountIndexRequest;
-use App\Api\v1\Requests\TwoFAccountReorderRequest;
 use App\Api\v1\Requests\TwoFAccountStoreRequest;
 use App\Api\v1\Requests\TwoFAccountUpdateRequest;
 use App\Api\v1\Requests\TwoFAccountUriRequest;
@@ -151,7 +151,7 @@ class TwoFAccountController extends Controller
 
             return $migrationResource instanceof \Illuminate\Http\UploadedFile
                 ? new TwoFAccountCollection(TwoFAccounts::migrate($migrationResource->get()))
-                : response()->json(['message' => __('errors.file_upload_failed')], 500);
+                : response()->json(['message' => __('error.file_upload_failed')], 500);
         } else {
             return new TwoFAccountCollection(TwoFAccounts::migrate($request->payload));
         }
@@ -162,7 +162,7 @@ class TwoFAccountController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function reorder(TwoFAccountReorderRequest $request)
+    public function reorder(ReorderRequest $request)
     {
         $validated = $request->validated();
 
@@ -203,7 +203,7 @@ class TwoFAccountController extends Controller
         if ($this->tooManyIds($validated['ids'])) {
             return response()->json([
                 'message' => 'bad request',
-                'reason'  => [__('errors.too_many_ids')],
+                'reason'  => [__('error.too_many_ids')],
             ], 400);
         }
 
@@ -276,7 +276,7 @@ class TwoFAccountController extends Controller
         if ($this->tooManyIds($validated['ids'])) {
             return response()->json([
                 'message' => 'bad request',
-                'reason'  => [__('errors.too_many_ids')],
+                'reason'  => [__('error.too_many_ids')],
             ], 400);
         }
 
@@ -316,7 +316,7 @@ class TwoFAccountController extends Controller
         if ($this->tooManyIds($validated['ids'])) {
             return response()->json([
                 'message' => 'bad request',
-                'reason'  => [__('errors.too_many_ids')],
+                'reason'  => [__('error.too_many_ids')],
             ], 400);
         }
 

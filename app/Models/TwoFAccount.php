@@ -121,7 +121,7 @@ class TwoFAccount extends Model implements Sortable
     /**
      * model's array form.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [];
 
@@ -135,14 +135,14 @@ class TwoFAccount extends Model implements Sortable
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     public $appends = [];
 
     /**
      * The model's attributes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [
         'digits'    => 6,
@@ -152,7 +152,7 @@ class TwoFAccount extends Model implements Sortable
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [];
 
@@ -220,7 +220,7 @@ class TwoFAccount extends Model implements Sortable
      * The OTP generator.
      * Instanciated as null to keep the model light
      *
-     * @var \OTPHP\OTPInterface|null
+     * @var \OTPHP\OTPInterface|\OTPHP\TOTPInterface|\OTPHP\HOTPInterface|null
      */
     protected $generator = null;
 
@@ -406,7 +406,7 @@ class TwoFAccount extends Model implements Sortable
         Log::info(sprintf('OTP requested for TwoFAccount (%s)', $this->id ? 'id:' . $this->id : 'preview'));
 
         // Early exit if the model has an undecipherable secret
-        if (strtolower($this->secret) === __('errors.indecipherable')) {
+        if (strtolower($this->secret) === __('error.indecipherable')) {
             Log::error('Secret cannot be deciphered, OTP generation aborted');
 
             throw new UndecipherableException;
@@ -444,7 +444,7 @@ class TwoFAccount extends Model implements Sortable
             Log::info(sprintf('New OTP generated for TwoFAccount (%s)', $this->id ? 'id:' . $this->id : 'preview'));
 
             return $OtpDto;
-        } catch (\Exception|\Throwable $ex) {
+        } catch (\Throwable $ex) {
             Log::error('An error occured, OTP generation aborted');
             // Currently a secret issue is the only possible exception thrown by OTPHP for this stack
             // so it is Ok to send the corresponding 2FAuth exception.
@@ -500,7 +500,7 @@ class TwoFAccount extends Model implements Sortable
         // First we instanciate the OTP generator
         try {
             $this->generator = Factory::loadFromProvisioningUri($isSteamTotp ? str_replace('otpauth://steam', 'otpauth://totp', $uri) : $uri);
-        } catch (\Exception|\Throwable $ex) {
+        } catch (\Throwable $ex) {
 
             // Hack for Microsoft corporate 2FAs for whom the Issuer query parameter != the Issuer aside the account
             $parsed_uri = \OTPHP\Url::fromString($uri);
@@ -513,7 +513,7 @@ class TwoFAccount extends Model implements Sortable
                 try {
                     $this->generator = Factory::loadFromProvisioningUri($newUri);
                     $this->generator->setLabel($service . '_' . $this->generator->getLabel());
-                } catch (\Exception|\Throwable $ex) {
+                } catch (\Throwable $ex) {
                     throw ValidationException::withMessages([
                         'uri' => __('validation.custom.uri.regex', ['attribute' => 'uri']),
                     ]);
@@ -656,7 +656,7 @@ class TwoFAccount extends Model implements Sortable
         } catch (UnsupportedOtpTypeException $exception) {
             Log::error(sprintf('%s is not an OTP type supported by the current generator', $this->otp_type));
             throw $exception;
-        } catch (\Exception|\Throwable $exception) {
+        } catch (\Throwable $exception) {
             throw new InvalidOtpParameterException($exception->getMessage());
         }
     }

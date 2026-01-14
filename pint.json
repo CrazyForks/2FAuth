@@ -6,7 +6,8 @@
         "config",
         "database",
         "public",
-        "resources"
+        "resources",
+        "tests"
     ],
     "rules": {
         "binary_operator_spaces": {

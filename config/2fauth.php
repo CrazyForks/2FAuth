@@ -13,7 +13,9 @@ $preferences = [
     'useBasicQrcodeReader'   => envUnlessEmpty('USERPREF_DEFAULT__USE_BASIC_QRCODE_READER', false),
     'displayMode'            => envUnlessEmpty('USERPREF_DEFAULT__DISPLAY_MODE', 'list'),
     'showAccountsIcons'      => envUnlessEmpty('USERPREF_DEFAULT__SHOW_ACCOUNTS_ICONS', true),
+    'iconSource'             => envUnlessEmpty('USERPREF_DEFAULT__ICON_SOURCE', 'logolib'),
     'iconCollection'         => envUnlessEmpty('USERPREF_DEFAULT__ICON_COLLECTION', 'selfh'),
+    'iconPack'               => envUnlessEmpty('USERPREF_DEFAULT__ICON_PACK', null),
     'iconVariant'            => envUnlessEmpty('USERPREF_DEFAULT__ICON_VARIANT', 'regular'),
     'iconVariantStrictFetch' => envUnlessEmpty('USERPREF_DEFAULT__ICON_VARIANT_STRICT_FETCH', false),
     'kickUserAfter'          => envUnlessEmpty('USERPREF_DEFAULT__KICK_USER_AFTER', 15),
@@ -33,6 +35,7 @@ $preferences = [
     'notifyOnNewAuthDevice'  => envUnlessEmpty('USERPREF_DEFAULT__NOTIFY_ON_NEW_AUTH_DEVICE', false),
     'notifyOnFailedLogin'    => envUnlessEmpty('USERPREF_DEFAULT__NOTIFY_ON_FAILED_LOGIN', false),
     'timezone'               => envUnlessEmpty('USERPREF_DEFAULT__TIMEZONE', 'UTC'),
+    'sortOrder'              => envUnlessEmpty('USERPREF_DEFAULT__SORT_ORDER', 'asc'),
     'sortCaseSensitive'      => envUnlessEmpty('USERPREF_DEFAULT__SORT_CASE_SENSITIVE', false),
     'autoCloseTimeout'       => envUnlessEmpty('USERPREF_DEFAULT__AUTO_CLOSE_TIMEOUT', 2),
     'AutoSaveQrcodedAccount' => envUnlessEmpty('USERPREF_DEFAULT__AUTO_SAVE_QRCODED_ACCOUNT', false),
@@ -43,6 +46,7 @@ $nonLockablePreferences = [
     'activeGroup',
     'defaultGroup',
     'useWebauthnOnly',
+    'sortOrder',
 ];
 
 return [
@@ -54,7 +58,7 @@ return [
     |
     */
 
-    'version' => '5.6.1',
+    'version' => '6.0.0',
     'repository' => 'https://github.com/Bubka/2FAuth',
     'latestReleaseUrl' => 'https://api.github.com/repos/Bubka/2FAuth/releases/latest',
     'installDocUrl' => 'https://docs.2fauth.app/getting-started/installation/self-hosted-server/',

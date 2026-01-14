@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-dom": "*",
@@ -33,8 +33,8 @@
         "jackiedo/dotenv-editor": "dev-master",
         "jenssegers/agent": "^2.6.4",
         "khanamiryan/qrcode-detector-decoder": "^2.0.2",
-        "laragear/webauthn": "^2.0.3",
-        "laravel/framework": "^11.9",
+        "laragear/webauthn": "^4.0",
+        "laravel/framework": "^12.0",
         "laravel/passport": "^12.0",
         "laravel/socialite": "^5.10",
         "laravel/tinker": "^2.9",
@@ -48,11 +48,12 @@
         "barryvdh/laravel-ide-helper": "^3.5.5",
         "brianium/paratest": "^7.5",
         "fakerphp/faker": "^1.24.1",
-        "larastan/larastan": "^2.9",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.21",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.1",
-        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpunit/phpunit": "^11.5.15"
     },
     "config": {

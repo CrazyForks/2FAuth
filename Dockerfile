@@ -1,8 +1,8 @@
 ARG BUILDPLATFORM=linux/amd64
 ARG TARGETPLATFORM
-ARG ALPINE_VERSION=3.21
-ARG PHP_VERSION=8.3-alpine${ALPINE_VERSION}
-ARG COMPOSER_VERSION=2.7
+ARG ALPINE_VERSION=3.23
+ARG PHP_VERSION=8.4-alpine${ALPINE_VERSION}
+ARG COMPOSER_VERSION=2.9
 ARG SUPERVISORD_VERSION=v0.7.3
 
 ARG UID=1000
@@ -46,28 +46,28 @@ COPY --from=supervisord --chown=${UID}:${GID} /bin /usr/local/bin/supervisord
 # Install PHP and PHP system dependencies
 RUN apk add --update --no-cache \
     # PHP
-    php83 \
+    php84 \
     # Composer dependencies
-    php83-phar \
+    php84-phar \
     # PHP SQLite, MySQL/MariaDB & Postgres drivers
-    php83-pdo_sqlite php83-sqlite3 php83-pdo_mysql php83-pdo_pgsql php83-pgsql \
+    php84-pdo_sqlite php84-sqlite3 php84-pdo_mysql php84-pdo_pgsql php84-pgsql \
     # PHP extensions
-    php83-xml php83-gd php83-mbstring php83-tokenizer php83-fileinfo php83-bcmath php83-ctype php83-dom php-redis \
+    php84-xml php84-gd php84-mbstring php84-tokenizer php84-fileinfo php84-bcmath php84-ctype php84-dom php-redis \
     # Runtime dependencies
-    php83-session php83-openssl \
+    php84-session php84-openssl \
     # Nginx and PHP FPM to serve over HTTP
-    php83-fpm nginx
+    php84-fpm nginx
 
 # PHP FPM configuration
 # Change username and ownership in php-fpm pool config
-RUN sed -i '/user = nobody/d' /etc/php83/php-fpm.d/www.conf && \
-    sed -i '/group = nobody/d' /etc/php83/php-fpm.d/www.conf && \
-    sed -i '/listen.owner/d' /etc/php83/php-fpm.d/www.conf && \
-    sed -i '/listen.group/d' /etc/php83/php-fpm.d/www.conf
+RUN sed -i '/user = nobody/d' /etc/php84/php-fpm.d/www.conf && \
+    sed -i '/group = nobody/d' /etc/php84/php-fpm.d/www.conf && \
+    sed -i '/listen.owner/d' /etc/php84/php-fpm.d/www.conf && \
+    sed -i '/listen.group/d' /etc/php84/php-fpm.d/www.conf
 # Pre-create files with the correct permissions
 RUN mkdir /run/php && \
-    chown ${UID}:${GID} /run/php /var/log/php83 && \
-    chmod 700 /run/php /var/log/php83
+    chown ${UID}:${GID} /run/php /var/log/php84 && \
+    chmod 700 /run/php /var/log/php84
 
 # NGINX
 # Clean up
@@ -101,7 +101,7 @@ COPY --from=vendor --chown=${UID}:${GID} /srv/vendor /srv/vendor
 
 # Copy the rest of the code
 COPY --chown=${UID}:${GID} . .
-# RUN composer dump-autoload --no-scripts --no-dev --optimize
+RUN composer dump-autoload --no-scripts --no-dev --optimize
 
 # Entrypoint
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
@@ -109,159 +109,11 @@ COPY --chown=${UID}:${GID} docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 500 /usr/local/bin/entrypoint.sh
 
 ENV \
-    # You can change the name of the app
-    APP_NAME=2FAuth \
-    # You can leave this on "local". If you change it to production most console commands will ask for extra confirmation.
-    # Never set it to "testing".
-    APP_ENV=local \
-    # The timezone for your application, which is used to record dates and times to database. This global setting can be
-    # overridden by users via in-app settings for a personalised dates and times display.
-    # If this setting is changed while the application is already running, existing records in the database won't be updated.
-    APP_TIMEZONE=UTC \
-    # Set to true if you want to see debug information in error screens.
-    APP_DEBUG=false \
-    # This should be your email address
-    SITE_OWNER=mail@example.com  \
-    # The encryption key for  our database and sessions. Keep this very secure.
-    # If you generate a new one all existing data must be considered LOST.
-    # Change it to a string of exactly 32 chars or use command `php artisan key:generate` to generate it
-    APP_KEY=SomeRandomStringOf32CharsExactly \
-    # This variable must match your installation's external address.
-    # Webauthn won't work otherwise.
-    APP_URL=http://localhost \
-    # If you want to serve js assets from a CDN (like https://cdn.example.com),
-    # uncomment the following line and set this var with the CDN url.
-    # Otherwise, let this line commented.
-    # ASSET_URL=http://localhost \
-    #
-    # Turn this to true if you want your app to react like a demo.
-    # The Demo mode reset the app content every hours and set a generic demo user.
-    IS_DEMO_APP=false \
-    # The log channel defines where your log entries go to.
-    # 'daily' is the default logging mode giving you 7 daily rotated log files in /storage/logs/.
-    # Also available are 'errorlog', 'syslog', 'stderr', 'papertrail', 'slack' and a 'stack' channel
-    # to combine multiple channels into a single one.
     LOG_CHANNEL=daily \
-    # Log level. You can set this from least severe to most severe:
-    # debug, info, notice, warning, error, critical, alert, emergency
-    # If you set it to debug your logs will grow large, and fast. If you set it to emergency probably
-    # nothing will get logged, ever.
-    LOG_LEVEL=notice \
-    # Database config & credentials
-    # DB_CONNECTION can only be sqlite
+    LOG_LEVEL=info \
     DB_CONNECTION=sqlite \
     DB_DATABASE="/srv/database/database.sqlite" \
-    # If you're looking for performance improvements, you could install memcached.
-    CACHE_DRIVER=file \
-    SESSION_DRIVER=file \
-    # Mail settings
-    # Refer your email provider documentation to configure your mail settings
-    # Set a value for every available setting to avoid issue
-    MAIL_MAILER=log \
-    MAIL_HOST=smtp.mailtrap.io \
-    MAIL_PORT=2525 \
-    MAIL_USERNAME=null \
-    MAIL_PASSWORD=null \
-    MAIL_ENCRYPTION=null \
-    MAIL_FROM_NAME=null \
-    MAIL_FROM_ADDRESS=null \
-    # SSL peer verification.
-    # Set this to false to disable the SSL certificate validation.
-    # WARNING
-    # Disabling peer verification can result in a major security flaw.
-    # Change it only if you know what you're doing.
-    MAIL_VERIFY_SSL_PEER=true \
-    # API settings
-    # The maximum number of API calls in a minute from the same IP.
-    # Once reached, all requests from this IP will be rejected until the minute has elapsed.
-    # Set to null to disable the API throttling.
-    THROTTLE_API=60 \
-    # Authentication settings
-    # The number of times per minute a user can fail to log in before being locked out.
-    # Once reached, all login attempts will be rejected until the minute has elapsed.
-    # This setting applies to both email/password and webauthn login attemps.
-    LOGIN_THROTTLE=5 \
-    # The default authentication guard
-    # Supported:
-    #   'web-guard' : The Laravel built-in auth system (default if nulled)
-    #   'reverse-proxy-guard' : When 2FAuth is deployed behind a reverse-proxy that handle authentication
-    # WARNING
-    # When using 'reverse-proxy-guard' 2FAuth only look for the dedicated headers and skip all other built-in
-    # authentication checks. That means your proxy is fully responsible of the authentication process, 2FAuth will
-    # trust him as long as headers are presents.
-    AUTHENTICATION_GUARD=web-guard \
-    # Authentication log retention time, in days.
-    # Log entries older than that are automatically deleted.
-    AUTHENTICATION_LOG_RETENTION=365 \
-    # Name of the HTTP headers sent by the reverse proxy that identifies the authenticated user at proxy level.
-    # Check your proxy documentation to find out how these headers are named (i.e 'REMOTE_USER', 'REMOTE_EMAIL', etc...)
-    # (only relevant when AUTHENTICATION_GUARD is set to 'reverse-proxy-guard')
-    AUTH_PROXY_HEADER_FOR_USER=null \
-    AUTH_PROXY_HEADER_FOR_EMAIL=null \
-    # Custom logout URL to open when using an auth proxy.
-    PROXY_LOGOUT_URL=null \
-    # WebAuthn settings
-    # Relying Party name, aka the name of the application. If blank, defaults to APP_NAME. Do not set to null.
-    WEBAUTHN_NAME=2FAuth \
-    # Relying Party ID, should equal the site domain (i.e 2fauth.example.com).
-    # If null, the device will fill it internally (recommended)
-    # See https://webauthn-doc.spomky-labs.com/prerequisites/the-relying-party#how-to-determine-the-relying-party-id
-    WEBAUTHN_ID=null \
-    # Use this setting to control how user verification behave during the
-    # WebAuthn authentication flow.
-    #
-    # Most authenticators and smartphones will ask the user to actively verify
-    # themselves for log in. For example, through a touch plus pin code,
-    # password entry, or biometric recognition (e.g., presenting a fingerprint).
-    # The intent is to distinguish one user from any other.
-    #
-    # Supported:
-    #   'required': Will ALWAYS ask for user verification
-    #   'preferred' (default) : Will ask for user verification IF POSSIBLE
-    #   'discouraged' : Will NOT ask for user verification (for example, to minimize disruption to the user interaction flow)
-    WEBAUTHN_USER_VERIFICATION=preferred \
-    #### SSO settings (for Socialite) ####
-    # Uncomment and complete lines for the OAuth providers you want to enable.
-    # OPENID_AUTHORIZE_URL= \
-    # OPENID_TOKEN_URL= \
-    # OPENID_USERINFO_URL= \
-    # OPENID_CLIENT_ID= \
-    # OPENID_CLIENT_SECRET= \
-    # OPENID_HTTP_VERIFY_SSL_PEER=true \
-    # Can also be the path to a custom certificate on disk, i.e
-    # OPENID_HTTP_VERIFY_SSL_PEER=/path/to/cert.pem \
-    #
-    # GITHUB_CLIENT_ID= \
-    # GITHUB_CLIENT_SECRET= \
-    # Use this setting to declare trusted proxied.
-    # Supported:
-    #   '*': to trust any proxy
-    #   A comma separated IP list: The list of proxies IP to trust
-    TRUSTED_PROXIES=null \
-    # Proxy for outgoing requests like new releases detection or logo fetching.
-    # You can provide a proxy URL that contains a scheme, username, and password.
-    # For example, "http://username:password@192.168.16.1:10".
-    PROXY_FOR_OUTGOING_REQUESTS=null \
-    # Set this to true to enable Content-Security-Policy (CSP).
-    # CSP helps to prevent or minimize the risk of certain types of security threats.
-    # This is mainly used as a defense against cross-site scripting (XSS) attacks, in which
-    # an attacker is able to inject malicious code into the web app
-    CONTENT_SECURITY_POLICY=true \
-    # Leave the following configuration vars as is.
-    # Unless you like to tinker and know what you're doing.
-    BROADCAST_DRIVER=log \
-    QUEUE_DRIVER=sync \
-    SESSION_LIFETIME=120 \
-    REDIS_HOST=127.0.0.1 \
-    REDIS_PASSWORD=null \
-    REDIS_PORT=6379 \
-    PUSHER_APP_ID= \
-    PUSHER_APP_KEY= \
-    PUSHER_APP_SECRET= \
-    PUSHER_APP_CLUSTER=mt1 \
-    VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}" \
-    VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}" \
-    MIX_ENV=local
+    WEBAUTHN_NAME=2FAuth
 
 ARG VERSION=unknown
 ARG CREATED="an unknown date"

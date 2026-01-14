@@ -29,7 +29,7 @@ class SocialiteControllerTest extends FeatureTestCase
      */
     protected $socialiteUser;
 
-    private const USER_OAUTH_ID = '12345';
+    private const USER_OAUTH_ID = '12345ABcd';
 
     private const USER_OAUTH_PROVIDER = 'github';
 
@@ -132,6 +132,24 @@ class SocialiteControllerTest extends FeatureTestCase
     {
         Socialite::shouldReceive('driver->user')
             ->andReturn($this->socialiteUser);
+
+        $response = $this->get('/socialite/callback/github', ['driver' => 'github']);
+
+        $this->assertAuthenticatedAs($this->user, 'web-guard');
+    }
+
+    #[Test]
+    public function test_callback_authenticates_the_user_when_oauthid_has_different_case_than_registered_one()
+    {
+        $uppercasedOauthid = strtoupper(($this->socialiteUser->id));
+
+        $socialiteUpdatedUser           = new \Laravel\Socialite\Two\User;
+        $socialiteUpdatedUser->id       = $uppercasedOauthid;
+        $socialiteUpdatedUser->email    = $this->socialiteUser->email;
+        $socialiteUpdatedUser->nickname = $this->socialiteUser->nickname;
+
+        Socialite::shouldReceive('driver->user')
+            ->andReturn($socialiteUpdatedUser);
 
         $response = $this->get('/socialite/callback/github', ['driver' => 'github']);
 
@@ -263,6 +281,33 @@ class SocialiteControllerTest extends FeatureTestCase
         $socialiteUserWithSameEmail->id       = '666';
         $socialiteUserWithSameEmail->name     = 'socialiteUserWithSameEmail';
         $socialiteUserWithSameEmail->email    = 'other@example.com';
+        $socialiteUserWithSameEmail->nickname = self::USER_NICKNAME;
+
+        Socialite::shouldReceive('driver->user')
+            ->andReturn($socialiteUserWithSameEmail);
+
+        $response = $this->get('/socialite/callback/github', ['driver' => 'github']);
+
+        $response->assertRedirect('/error?err=sso_email_already_used');
+        $this->assertDatabaseMissing('users', [
+            'oauth_id'       => '666',
+            'oauth_provider' => self::USER_OAUTH_PROVIDER,
+        ]);
+    }
+
+    #[Test]
+    public function test_callback_returns_error_when_email_is_already_used_in_different_case()
+    {
+        $userWithSameEmail = User::factory()->create([
+            'name'     => 'userWithSameEmail',
+            'email'    => 'other@example.com',
+            'password' => 'password',
+        ]);
+
+        $socialiteUserWithSameEmail           = new \Laravel\Socialite\Two\User;
+        $socialiteUserWithSameEmail->id       = '666';
+        $socialiteUserWithSameEmail->name     = 'socialiteUserWithSameEmail';
+        $socialiteUserWithSameEmail->email    = 'OTHER@example.com';
         $socialiteUserWithSameEmail->nickname = self::USER_NICKNAME;
 
         Socialite::shouldReceive('driver->user')

@@ -1,0 +1,1 @@
+import{ad as e}from"./app-CLj7mONa.js";/*! 2FAuth version 6.0.0 - Copyright (c) 2025 Bubka - https://github.com/Bubka/2FAuth */const r=e("bus",{state:()=>({migrationUri:null,decodedUri:null,inManagementMode:!1,editedGroupName:null,username:null}),actions:{}});export{r as u};

@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import { startsWithUppercase } from '@/composables/helpers'
 import { useUserStore } from '@/stores/user'
-import { useNotifyStore } from '@/stores/notify'
+import { useNotify } from '@2fauth/ui'
 import twofaccountService from '@/services/twofaccountService'
 import { saveAs } from 'file-saver'
 
-export const useTwofaccounts = defineStore({
-    id: 'twofaccounts',
-
+export const useTwofaccounts = defineStore('twofaccounts', {
     state: () => {
         return {
             items: [],
@@ -15,6 +13,7 @@ export const useTwofaccounts = defineStore({
             filter: '',
             backendWasNewer: false,
             fetchedOn: null,
+            groupLessOnly: false,
         }
     },
 
@@ -24,7 +23,10 @@ export const useTwofaccounts = defineStore({
 
             return state.items.filter(
                 item => {
-                    if (parseInt(user.preferences.activeGroup) > 0 ) {
+                    if (state.groupLessOnly) {
+                        return item.group_id == null
+                    }
+                    else if (parseInt(user.preferences.activeGroup) > 0) {
                         return ((item.service ? item.service.toLowerCase().includes(state.filter.toLowerCase()) : false) ||
                             item.account.toLowerCase().includes(state.filter.toLowerCase())) &&
                             (item.group_id == parseInt(user.preferences.activeGroup))
@@ -146,7 +148,7 @@ export const useTwofaccounts = defineStore({
          * Deletes selected accounts
          */
         async deleteSelected() {
-            if(confirm(trans('twofaccounts.confirm.delete')) && this.selectedIds.length > 0) {
+            if(confirm(this.$i18n.global.t('confirmation.delete_twofaccount')) && this.selectedIds.length > 0) {
                 await twofaccountService.batchDelete(this.selectedIds.join())
                 .then(response => {
                     let remainingItems = this.items
@@ -155,7 +157,7 @@ export const useTwofaccounts = defineStore({
                     })
                     this.items = remainingItems
                     this.selectNone()
-                    useNotifyStore().success({ text: trans('twofaccounts.accounts_deleted') })
+                    useNotify().success({ text: this.$i18n.global.t('notification.accounts_deleted') })
                 })
             }
         },
@@ -187,8 +189,24 @@ export const useTwofaccounts = defineStore({
         /**
          * Saves the accounts order to db
          */
-        saveOrder() {
-            twofaccountService.saveOrder(this.orderedIds)
+        saveOrder(newOrder = 'free') {
+            twofaccountService.saveOrder(this.orderedIds).then(() => {
+                useUserStore().preferences.sortOrder = newOrder
+                userService.updatePreference('sortOrder', newOrder)
+            })
+        },
+        
+        /**
+         * Sorts accounts based on user default option
+         */
+        sortDefault() {
+            if (useUserStore().preferences.sortOrder == 'asc') {
+                this.sortAsc()
+            }
+
+            if (useUserStore().preferences.sortOrder == 'desc') {
+                this.sortDesc()
+            }
         },
         
         /**
@@ -206,7 +224,7 @@ export const useTwofaccounts = defineStore({
                 return serviceA.localeCompare(serviceB, useUserStore().preferences.lang)
             });
 
-            this.saveOrder()
+            this.saveOrder('asc')
         },
 
         /**
@@ -224,7 +242,7 @@ export const useTwofaccounts = defineStore({
                 return serviceB.localeCompare(serviceA, useUserStore().preferences.lang)
             });
 
-            this.saveOrder()
+            this.saveOrder('desc')
         },
         
         /**

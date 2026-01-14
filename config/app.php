@@ -60,6 +60,8 @@ return [
 
     'url' => $appUrl,
 
+    // 'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+
     'asset_url' => env('ASSET_URL', $appUrl),
 
     /*
@@ -105,11 +107,11 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'key' => str_starts_with(env('APP_KEY')??'', 'base64:') ? env('APP_KEY') : substr(env('APP_KEY')??'', 0, 32),
+    'key' => trimAppKey(env('APP_KEY')),
 
     'previous_keys' => [
         ...array_filter(
-            explode(',', env('APP_PREVIOUS_KEYS', ''))
+            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
 

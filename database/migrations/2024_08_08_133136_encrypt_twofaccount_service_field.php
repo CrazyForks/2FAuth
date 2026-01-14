@@ -3,6 +3,7 @@
 use App\Models\TwoFAccount;
 use App\Services\SettingService;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
@@ -48,7 +49,7 @@ return new class extends Migration
             // We don't want to encrypt the Service field with a different APP_KEY
             // than the one used to encrypt the legacy_uri, account and secret fields, the
             // model would be inconsistent. 
-            if ($twofaccount->legacy_uri === __('errors.indecipherable')) {
+            if ($twofaccount->legacy_uri === __('error.indecipherable')) {
                 Log::warning(sprintf('Migration: Service encryption failed for twofaccount with id #%s. The current APP_KEY cannot decipher already encrypted fields, encrypting the Service field with this key would lead to inconsistent model encryption', $twofaccount->id));
             }
             else {
@@ -69,7 +70,7 @@ return new class extends Migration
         foreach (TwoFAccount::all() as $twofaccount) {
             Log::notice(sprintf('Migration rollback: Trying to decipher Service field for twofaccount with id #%s', $twofaccount->id));
 
-            if ($twofaccount->legacy_uri === __('errors.indecipherable')) {
+            if ($twofaccount->legacy_uri === __('error.indecipherable')) {
                 Log::warning(sprintf('Migration rollback: Service decipherement failed for twofaccount with id #%s', $twofaccount->id));
             }
             else {

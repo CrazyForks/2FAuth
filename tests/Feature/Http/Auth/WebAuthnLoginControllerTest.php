@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Laragear\WebAuthn\Assertion\Validator\AssertionValidator;
+use Laragear\WebAuthn\Challenge\Challenge;
 use Laragear\WebAuthn\Enums\UserVerification;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -336,7 +337,7 @@ class WebAuthnLoginControllerTest extends FeatureTestCase
     #[Test]
     public function test_get_options_returns_success()
     {
-        Config::set('webauthn.user_verification', UserVerification::PREFERRED);
+        Config::set('webauthn.user_verification', UserVerification::Preferred);
 
         $this->createWebauthnCredential(self::CREDENTIAL_ID, $this->user->id, self::USER_ID);
 
@@ -357,9 +358,9 @@ class WebAuthnLoginControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_get_options_for_securelogin_returns_required_userVerification()
+    public function test_get_options_for_securelogin_returns_required_user_verification()
     {
-        Config::set('webauthn.user_verification', UserVerification::REQUIRED);
+        Config::set('webauthn.user_verification', UserVerification::Required);
 
         $this->createWebauthnCredential(self::CREDENTIAL_ID, $this->user->id, self::USER_ID);
 
@@ -382,9 +383,9 @@ class WebAuthnLoginControllerTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_get_options_for_fastlogin_returns_discouraged_userVerification()
+    public function test_get_options_for_fastlogin_returns_discouraged_user_verification()
     {
-        Config::set('webauthn.user_verification', UserVerification::DISCOURAGED);
+        Config::set('webauthn.user_verification', UserVerification::Discouraged);
 
         $this->createWebauthnCredential(self::CREDENTIAL_ID, $this->user->id, self::USER_ID);
 
@@ -491,7 +492,7 @@ class WebAuthnLoginControllerTest extends FeatureTestCase
      */
     protected function addWebauthnChallengeToSession() : void
     {
-        $this->session(['_webauthn' => new \Laragear\WebAuthn\Challenge(
+        $this->session(['_webauthn' => new Challenge(
             new \Laragear\WebAuthn\ByteBuffer(base64_decode(self::ASSERTION_CHALLENGE)),
             60,
             false,

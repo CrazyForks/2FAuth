@@ -2,12 +2,57 @@
 
 set -e
 
+
+# sh version of https://github.com/docker-library/mysql/blob/master/docker-entrypoint.sh
+file_env() {
+  var="$1"
+  fileVar="${var}_FILE"
+  def="${2:-}"
+
+  # Check if both var and fileVar are set
+  eval "val_var=\$$var"
+  eval "val_fileVar=\$$fileVar"
+  if [ -n "$val_var" ] && [ -n "$val_fileVar" ]; then
+    echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
+    exit 1
+  fi
+
+  # Set default value
+  val="$def"
+
+  # Use var if set
+  if [ -n "$val_var" ]; then
+    val="$val_var"
+  # Use fileVar if set
+  elif [ -n "$val_fileVar" ]; then
+    val="$(cat "$val_fileVar")" || {
+      echo >&2 "error: could not read file $val_fileVar"
+      exit 1
+    }
+  fi
+
+  # Export and unset
+  eval "export $var=\"$val\""
+  eval "unset $fileVar"
+}
+
 echo "Running version ${VERSION} commit ${COMMIT} built on ${CREATED}"
 
 # Show versions
 echo "supervisord version: $(supervisord version)"
-php-fpm83 -v | head -n 1
+php-fpm84 -v | head -n 1
 nginx -v
+
+# Initialize env vars that might be stored in a file
+file_env APP_KEY
+file_env DB_DATABASE
+file_env DB_USERNAME
+file_env DB_PASSWORD
+file_env DB_HOST
+file_env MAIL_USERNAME
+file_env MAIL_PASSWORD
+file_env REDIS_PASSWORD
+
 
 # Database creation
 if [ "${DB_CONNECTION}" = "sqlite" ]; then
@@ -43,6 +88,15 @@ else
   rm -r /srv/storage
 fi
 ln -s /2fauth/storage /srv/storage
+echo "/srv/storage is now a symlink to /2fauth/storage"
+
+# validate a bunch of environment variables and warn the user:
+for v in APP_KEY; do
+    eval "val=\$$v"
+    if [ -z "$val" ]; then
+        echo "!! Environment variable $v is empty !!"
+    fi
+done
 
 # Note: ${COMMIT} is set by the CI
 if [ -f /2fauth/installed ]; then
@@ -54,7 +108,7 @@ if [ -f /2fauth/installed ]; then
     php artisan migrate --force
   fi
 else
-  php artisan migrate:refresh --force
+  php artisan migrate:fresh --force
   php artisan passport:install --no-interaction
 fi
 

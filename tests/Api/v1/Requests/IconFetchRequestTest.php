@@ -5,10 +5,12 @@ namespace Tests\Api\v1\Requests;
 use App\Api\v1\Requests\IconFetchRequest;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Data\OtpTestData;
 use Tests\TestCase;
 
 /**
@@ -35,6 +37,10 @@ class IconFetchRequestTest extends TestCase
     #[DataProvider('provideValidData')]
     public function test_valid_data(array $data) : void
     {
+        Storage::fake('iconPacks');
+        Storage::disk('iconPacks')->put('myIconPack/' . OtpTestData::ICON_SVG, OtpTestData::ICON_SVG_DATA);
+        Storage::disk('iconPacks')->put('myIconPack/SubFolder/' . OtpTestData::ICON_SVG, OtpTestData::ICON_SVG_DATA);
+
         $request = new IconFetchRequest;
         $request->merge($data);
 
@@ -52,7 +58,7 @@ class IconFetchRequestTest extends TestCase
             'VALID_SERVICE_AS_STRING' => [[
                 'service' => 'validWord',
             ]],
-            'VALID_SERVCE_WITH_SPECIAL_CHARS' => [[
+            'VALID_SERVICE_WITH_SPECIAL_CHARS' => [[
                 'service' => '~string.with-sp3ci@l-ch4rs',
             ]],
             'VALID_SELFH_ICON_COLLECTION' => [[
@@ -102,6 +108,14 @@ class IconFetchRequestTest extends TestCase
                 'iconCollection' => 'tfa',
                 'variant'        => 'regular',
             ]],
+            'VALID_ICON_PACK' => [[
+                'service'  => 'validWord',
+                'iconPack' => 'myIconPack',
+            ]],
+            'VALID_ICON_PACK_WITH_SUBFOLDER' => [[
+                'service'  => 'validWord',
+                'iconPack' => 'myIconPack/SubFolder',
+            ]],
         ];
     }
 
@@ -129,6 +143,7 @@ class IconFetchRequestTest extends TestCase
             'NULL_ICON_COLLECTION' => [[
                 'service'        => 'validWord',
                 'iconCollection' => null,
+                'variant'        => 'regular',
             ]],
             'NULL_VARIANT' => [[
                 'service'        => 'validWord',
@@ -138,11 +153,17 @@ class IconFetchRequestTest extends TestCase
             'EMPTY_ICON_COLLECTION' => [[
                 'service'        => 'validWord',
                 'iconCollection' => '',
+                'variant'        => 'regular',
             ]],
             'EMPTY_VARIANT' => [[
                 'service'        => 'validWord',
                 'iconCollection' => 'tfa',
                 'variant'        => '',
+            ]],
+            'VARIANT_SHOUD_BE_MISSING_WITH_ICON_PACK_IS_PRESENT' => [[
+                'service'  => 'validWord',
+                'iconPack' => 'myIconPack',
+                'variant'  => 'regular',
             ]],
             'SERVICE_AS_INT' => [[
                 'service' => 0,
@@ -171,6 +192,12 @@ class IconFetchRequestTest extends TestCase
                 'service'        => 'validWord',
                 'iconCollection' => 'tfa',
                 'variant'        => 'string_not_in_tfa_variant_list',
+            ]],
+            'CONCURRENT_ICON_PACK_WITH_ICON_COLLECTION' => [[
+                'service'        => 'validWord',
+                'iconCollection' => 'selfh',
+                'variant'        => 'regular',
+                'iconPack'       => 'myIconPack',
             ]],
         ];
     }

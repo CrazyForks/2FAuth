@@ -160,7 +160,7 @@ class GroupControllerTest extends FeatureTestCase
     {
         $this->actingAs($this->user, 'api-guard')
             ->json('POST', '/api/v1/groups', [
-                'name' => __('commons.all'),
+                'name' => __('label.all'),
             ])
             ->assertStatus(422);
     }
@@ -222,7 +222,7 @@ class GroupControllerTest extends FeatureTestCase
             ->json('GET', '/api/v1/groups/0')
             ->assertOk()
             ->assertJsonFragment([
-                'name'               => __('commons.all'),
+                'name'               => __('label.all'),
                 'twofaccounts_count' => $userTwofaccounts->count(),
             ]);
     }
@@ -346,6 +346,50 @@ class GroupControllerTest extends FeatureTestCase
         $response = $this->actingAs($this->user, 'api-guard')
             ->json('POST', '/api/v1/groups/' . $this->userGroupA->id . '/assign', [
                 'ids' => [$this->twofaccountC->id, $this->twofaccountD->id],
+            ])
+            ->assertForbidden()
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
+    
+
+    #[Test]
+    public function test_reorder_returns_success()
+    {
+        $response = $this->actingAs($this->user, 'api-guard')
+            ->json('POST', '/api/v1/groups/reorder', [
+                'orderedIds' => [$this->userGroupB->id, $this->userGroupA->id],
+            ])
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'message',
+                'orderedIds'
+            ])
+            ->assertJsonFragment([
+                'orderedIds' => [
+                    $this->userGroupB->id,
+                    $this->userGroupA->id
+                ]
+            ]);
+    }
+
+    #[Test]
+    public function test_reorder_with_invalid_data_returns_validation_error()
+    {
+        $response = $this->actingAs($this->user, 'api-guard')
+            ->json('POST', '/api/v1/groups/reorder', [
+                'orderedIds' => '3,2,1',
+            ])
+            ->assertStatus(422);
+    }
+
+    #[Test]
+    public function test_reorder_groups_of_another_user_is_forbidden()
+    {
+        $response = $this->actingAs($this->user, 'api-guard')
+            ->json('POST', '/api/v1/groups/reorder', [
+                'orderedIds' => [$this->anotherUserGroupB->id, $this->anotherUserGroupA->id],
             ])
             ->assertForbidden()
             ->assertJsonStructure([

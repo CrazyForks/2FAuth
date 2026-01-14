@@ -26,9 +26,6 @@ class TfaLogoLib extends AbstractLogoLib implements LogoLibInterface
 
     protected string $libUrl = 'https://raw.githubusercontent.com/2factorauth/twofactorauth/master/img/';
 
-    /**
-     * 
-     */
     public function __construct()
     {
         $this->setTfaCollection();

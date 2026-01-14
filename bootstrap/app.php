@@ -26,6 +26,20 @@ if (! function_exists('envUnlessEmpty')) {
     }
 }
 
+if (! function_exists('trimAppKey')) {
+    /**
+     * @return string|null
+     */
+    function trimAppKey(string|null $key)
+    {
+        $result = str_starts_with($key ?? '','base64:')
+            ? $key
+            : substr($key ?? '', 0, 32);
+
+        return $result;
+    }
+}
+
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );

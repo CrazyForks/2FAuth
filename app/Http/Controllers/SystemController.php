@@ -30,7 +30,7 @@ class SystemController extends Controller
         $infos['common']['Debug']        = var_export(config('app.debug'), true);
         $infos['common']['Cache driver'] = config('cache.default');
         $infos['common']['Log channel']  = config('logging.default');
-        $infos['common']['Log level']    = env('LOG_LEVEL');
+        $infos['common']['Log level']    = config('LOG_LEVEL');
         $infos['common']['DB driver']    = DB::getDriverName();
         // PHP info
         $infos['common']['PHP version']      = PHP_VERSION;
@@ -73,6 +73,8 @@ class SystemController extends Controller
             $request->user()->notify(new TestEmailSettingNotification);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
+
+            return response()->json(['message' => __('error.email_sending_failed'), 'details' => $th->getMessage()], 424);
         }
 
         return response()->json(['message' => 'Ok']);

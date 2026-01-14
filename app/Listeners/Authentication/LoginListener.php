@@ -27,6 +27,7 @@ namespace App\Listeners\Authentication;
 use App\Notifications\SignedInWithNewDeviceNotification;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use TypeError;
 
 class LoginListener extends AbstractAccessListener
@@ -66,7 +67,7 @@ class LoginListener extends AbstractAccessListener
         ]);
 
         if (! $known && ! $newUser && $user->preferences['notifyOnNewAuthDevice'] == true) {
-            $user->notify(new SignedInWithNewDeviceNotification($log));
+            $user->notify((new SignedInWithNewDeviceNotification($log))->locale($user->preferredLocale() == 'browser' ? App::currentLocale() : $user->preferredLocale()));
         }
     }
 }
