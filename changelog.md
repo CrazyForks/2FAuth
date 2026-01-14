@@ -79,6 +79,7 @@ And last but not least:
 
 - `/api/v1/icons/packs` GET path added ([doc](https://docs.2fauth.app/resources/rapidoc.html#get-/api/v1/icons/packs)).
 - `/api/v1/groups/reorder` POST path added ([doc](https://docs.2fauth.app/resources/rapidoc.html#post-/api/v1/groups/reorder)).
+- Add missing `orderedIds` property in `/api/v1/twofaccounts/reorder` POST response.
 
 ## [5.6.1] - 2025-11-21
 
