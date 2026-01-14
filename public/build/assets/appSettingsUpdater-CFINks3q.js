@@ -1,0 +1,1 @@
+import{ac as p,C as o}from"./app-CLj7mONa.js";/*! 2FAuth version 6.0.0 - Copyright (c) 2025 Bubka - https://github.com/Bubka/2FAuth */async function i(r,t,n=!1){let s=null,a=null;return await p.update(r,t,{returnError:!0}).then(e=>{s=t}).catch(e=>{n&&e.response.status===422?a=e.response.data.message:o().show(e)}),{data:s,error:a}}export{i as u};
