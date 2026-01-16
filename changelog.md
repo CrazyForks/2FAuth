@@ -1,5 +1,11 @@
 # Change log
 
+## [6.0.1] - 2026-01-dd
+
+### Fixed
+
+- [issue #516](https://github.com/Bubka/2FAuth/issues/516) Local iconsPack is greyout - cant be selected for item
+
 ## [6.0.0] - 2025-12-05
 
 2FAuth’s (not so) Major Update is Here!
