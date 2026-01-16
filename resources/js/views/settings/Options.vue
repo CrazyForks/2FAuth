@@ -157,9 +157,8 @@
         }
 
         userService.updatePreference(preference, value).then(response => {
-            // if (showNotification) {
-                useNotify().success({ text: t('notification.setting_saved') })
-            // }
+            user.preferences[preference] = value
+            useNotify().success({ text: t('notification.setting_saved') })
             
             if (preference === 'lang') {
                 user.applyLanguage()

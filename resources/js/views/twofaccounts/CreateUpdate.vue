@@ -12,7 +12,13 @@
     import { UseColorMode } from '@vueuse/components'
     import { useI18n } from 'vue-i18n'
     import { useErrorHandler } from '@2fauth/stores'
-    import { LucideHardDriveUpload, LucideImageUp, LucideQrCode, LucideWandSparkles } from 'lucide-vue-next'
+    import {
+        LucideHardDriveUpload,
+        LucideImageUp,
+        LucideQrCode,
+        LucideWandSparkles,
+        LucideRefreshCw
+    } from 'lucide-vue-next'
 
     const errorHandler = useErrorHandler()
     const { t } = useI18n()
@@ -103,7 +109,12 @@
     const fetchingLogo = ref(false)
     const iconCollection = ref(user.preferences.iconCollection)
     const iconCollectionVariant = ref(user.preferences.iconVariant)
-    
+    const iconPack = ref(user.preferences.iconPack)
+    const iconPacks = ref([
+        user.preferences.iconPack
+    ])
+    const hasSomeIconPack = ref(false)
+    const isLoading = ref(false)
 
     // $refs
     const iconInput = ref(null)
@@ -186,6 +197,8 @@
         } else {
             showAdvancedForm.value = true
         }
+
+        refreshIconPackList()
     })
 
     watch(iconCollection, (val) => {
@@ -449,7 +462,7 @@
                 })
             }
             else {
-                iconService.getLogoFromPack(form.service, user.preferences.iconPack, { returnError: true })
+                iconService.getLogoFromPack(form.service, iconPack.value, { returnError: true })
                 .then(response => {
                     if (response.status === 201) {
                         // clean possible already uploaded temp icon
@@ -498,6 +511,40 @@
         if( user.preferences.rememberActiveGroup) {
             userService.updatePreference('activeGroup', user.preferences.activeGroup)
         }
+    }
+
+
+    /**
+     * Refreshes the list of available icon packs
+     */
+    function refreshIconPackList() {
+        isLoading.value = true
+
+        iconService.getIconPacks().then(response => {
+            iconPacks.value = []
+            response.data.forEach((pack) => {
+                iconPacks.value.push({
+                    text: pack.name,
+                    value: pack.name
+                })
+            })
+
+            if (iconPacks.value.length == 0) {
+                hasSomeIconPack.value = false
+                iconPack.value = '/'
+                iconPacks.value.push({ text: 'label.no_available_icon_packs', value: '/' })
+            }
+            else {
+                hasSomeIconPack.value = true
+
+                iconPack.value = user.preferences.iconPack == null || !iconPacks.value.some((pack) => pack.value === user.preferences.iconPack)
+                    ? iconPacks.value[0].value
+                    : user.preferences.iconPack
+            }
+        })
+        .finally(() => {
+            isLoading.value = false
+        })
     }
 
 </script>
@@ -586,9 +633,8 @@
                 <!-- account -->
                 <FormField v-model="form.account" fieldName="account" :errorMessage="form.errors.get('account')" label="field.account" :placeholder="$t('field.account.placeholder')" />
                 <!-- icon upload -->
-                <label for="filUploadIcon" class="label">{{ $t('field.icon') }}</label>
+                <label v-if="user.preferences.iconSource == 'logolib'" for="icon-collection" class="label">{{ $t('field.icon') }}</label>
                 <!-- try my luck -->
-                <!-- <fieldset v-if="user.preferences.getOfficialIcons" :disabled="!form.service"> -->
                 <div v-if="user.preferences.iconSource == 'logolib'" class="field has-addons">
                     <div class="control">
                         <div class="select">
@@ -609,23 +655,17 @@
                         </div>
                     </div>
                 </div>
-                <div v-else-if="user.preferences.iconSource == 'iconpack'" class="field">
-                    <div class="control">
-                        <div class="select">
-                            <select :disabled="true" name="icon-pack" v-model="user.preferences.iconPack">
-                                <option :value="user.preferences.iconPack">
-                                    {{ user.preferences.iconPack }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <FormFieldError v-if="form.errors.hasAny('iconPack') != undefined" :error="form.errors.get('iconPack')" :field="'iconPack'" />
-                </div>
-                <!-- </fieldset> -->
+                <!-- icon pack -->
+                <FormSelect v-else-if="user.preferences.iconSource == 'iconpack'" v-model="iconPack" :options="iconPacks" fieldName="iconPack" :isDisabled="!form.service" label="field.icon">
+                    <button class="button is-ghost" @click="refreshIconPackList" type="button" :title="$t('tooltip.refresh_icon_pack_list')">
+                        <LucideRefreshCw :class="{ 'spinning': isLoading }"/>
+                    </button>
+                </FormSelect>
+                <!-- icon field buttons -->
                 <div class="field is-grouped">
                     <!-- try my luck button -->
                     <div class="control">
-                        <VueButton @click="fetchLogo" :color="mode == 'dark' ? 'is-dark' : ''" nativeType="button" :is-loading="fetchingLogo" :disabled="!form.service" aria-describedby="lgdTryMyLuck">
+                        <VueButton @click="fetchLogo" :color="mode == 'dark' ? 'is-dark' : ''" nativeType="button" :is-loading="fetchingLogo" :disabled="!form.service || !hasSomeIconPack" aria-describedby="lgdTryMyLuck">
                             <span class="icon is-small">
                                 <LucideWandSparkles />
                             </span>
