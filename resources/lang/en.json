@@ -572,7 +572,7 @@
     "message.notifications.test_email_settings.reason": "You are receiving this email because you requested a test email to validate the email settings of your 2FAuth instance.",
     "message.notifications.test_email_settings.subject": "2FAuth test email",
     "message.notifications.test_email_settings.success": "Good news, it works :)",
-    "message.optional_rules_you_should_follow": "Recommanded (highly)",
+    "message.optional_rules_you_should_follow": "Recommended (highly)",
     "message.or_continue_with": "You can also continue with:",
     "message.otpauth_export_format_desc": "otpauth URI is the most common format used to exchange 2FA data, for example in the form of a QR code when you enable 2FA on a web site. Select this if you want to switch from 2FAuth.",
     "message.otpauth_export_format_sub": "Export data as a list of otpauth URIs",
