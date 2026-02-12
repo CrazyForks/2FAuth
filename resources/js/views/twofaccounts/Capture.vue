@@ -165,7 +165,7 @@
                                             </div>
                                         </div>
                                         <p>
-                                            <a @click.stop="reloadLocation">{{ $t('label.refresh') }}</a>
+                                            <a class="is-link" @click.stop="reloadLocation">{{ $t('label.refresh') }}</a>
                                         </p>
                                     </div>
                                     <p v-else class="is-size-7">{{ $t('message.stream.' + errorPhrase + '.solution') }}</p>

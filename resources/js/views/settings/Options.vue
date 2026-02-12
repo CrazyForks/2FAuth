@@ -249,7 +249,7 @@
                         <FormSelect v-model="user.preferences.lang" @update:model-value="val => savePreference('lang', val)" :options="langs" fieldName="lang" :isLocked="appSettings.lockedPreferences.includes('lang')" label="field.language" help="field.language.help" />
                         <div class="field help">
                             {{ $t('message.some_translation_are_missing') }}
-                            <a class="ml-2" href="https://crowdin.com/project/2fauth">
+                            <a class="ml-2 is-link" href="https://crowdin.com/project/2fauth">
                                 {{ $t('link.help_translate_2fauth') }}
                                 <LucideExternalLink class="icon-size-1" />
                             </a>

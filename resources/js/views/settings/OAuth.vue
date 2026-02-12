@@ -173,7 +173,7 @@
                         <!-- revoke link -->
                         <div class="tags is-pulled-right">
                             <UseColorMode v-slot="{ mode }">
-                                <button type="button" v-if="token.value" class="button tag" :class="{'is-link': mode != 'dark'}" @click.stop="copyToClipboard(token.value)">
+                                <button type="button" v-if="token.value" class="button tag" :class="mode != 'dark' ? 'is-link' : 'is-white'" @click.stop="copyToClipboard(token.value)">
                                     {{ $t('label.copy') }}
                                 </button>
                                 <button type="button" class="button tag" :class="mode === 'dark' ? 'is-dark':'is-white'" @click="revokeToken(token.id)" :title="$t('tooltip.revoke')">

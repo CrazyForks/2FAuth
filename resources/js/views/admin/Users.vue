@@ -148,7 +148,7 @@
                                 <span class="is-block has-ellipsis is-family-primary is-size-6 is-size-7-mobile has-text-grey">{{ user.email }}</span>
                                 <!-- tag -->
                                 <div class="tags mt-2">
-                                    <span v-if="user.is_admin" class="tag is-rounded has-text-warning-dark" :class="mode == 'dark' ? 'has-background-black-bis' : 'has-background-grey-lighter'" >admin</span>
+                                    <span v-if="user.is_admin" class="tag is-rounded" :class="mode == 'dark' ? 'has-text-warning-40 has-background-black-bis' : 'has-text-warning-35 has-background-grey-lighter'" >admin</span>
                                     <span v-if="user.oauth_provider" class="tag is-rounded  has-text-grey" :class="mode == 'dark' ? 'has-background-black-bis' : 'has-background-grey-lighter'" >oauth: {{ user.oauth_provider }}</span>
                                 </div>
                             </div>

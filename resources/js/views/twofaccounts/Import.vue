@@ -279,7 +279,7 @@
                                         </div>
                                         <div class="media-content">
                                             <p class="title is-5 has-text-grey">{{ $t('heading.qr_code') }}</p>
-                                            <p class="subtitle is-6 is-size-7-mobile">{{ $t('message.supported_formats_for_qrcode_upload') }}</p>
+                                            <p class="subtitle is-6 mt-1 is-size-7-mobile" :class="{'has-text-grey-dark' : mode == 'dark'}">{{ $t('message.supported_formats_for_qrcode_upload') }}</p>
                                         </div>
                                     </div>
                                     <!-- <FormFieldError v-if="qrcodeForm.errors.hasAny('qrcode')" :error="qrcodeForm.errors.get('qrcode')" :field="'qrcode'" /> -->
@@ -290,10 +290,10 @@
                                     </template>
                                 </div>
                                 <footer class="card-footer">
-                                    <RouterLink id="btnCapture" :to="{ name: 'capture' }" class="card-footer-item">
+                                    <RouterLink id="btnCapture" :to="{ name: 'capture' }" class="card-footer-item is-link">
                                         {{ $t('link.scan') }}
                                     </RouterLink>
-                                    <a role="button" tabindex="0" class="card-footer-item is-relative" @click="qrcodeInput.click()" @keyup.enter="qrcodeInput.click()">
+                                    <a role="button" tabindex="0" class="card-footer-item is-relative is-link" @click="qrcodeInput.click()" @keyup.enter="qrcodeInput.click()">
                                         <input inert tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="submitQrCode" ref="qrcodeInput">
                                         {{ $t('label.upload') }}
                                     </a>
@@ -311,7 +311,7 @@
                                         </div>
                                         <div class="media-content">
                                             <p class="title is-5 has-text-grey">{{ $t('label.text_file') }}</p>
-                                            <p class="subtitle is-6 is-size-7-mobile">{{ $t('message.supported_formats_for_file_upload') }}</p>
+                                            <p class="subtitle is-6 mt-1 is-size-7-mobile" :class="{'has-text-grey-dark' : mode == 'dark'}">{{ $t('message.supported_formats_for_file_upload') }}</p>
                                         </div>
                                     </div>
                                     <template v-if="fileForm.errors.any()">
@@ -321,7 +321,7 @@
                                     </template>
                                 </div>
                                 <footer class="card-footer">
-                                    <a role="button" tabindex="0" class="card-footer-item is-relative" @click="fileInput.click()" @keyup.enter="fileInput.click()">
+                                    <a role="button" tabindex="0" class="card-footer-item is-relative is-link" @click="fileInput.click()" @keyup.enter="fileInput.click()">
                                         <input inert tabindex="-1" class="file-input" type="file" accept="text/plain,application/json,text/csv,.2fas" v-on:change="submitFile" ref="fileInput">
                                         {{ $t('label.upload') }}
                                     </a>
@@ -339,7 +339,7 @@
                                         </div>
                                         <div class="media-content">
                                             <p class="title is-5 has-text-grey">{{ $t('message.direct_input') }}</p>
-                                            <p class="subtitle is-6 is-size-7-mobile">{{ $t('message.expected_format_for_direct_input') }}</p>
+                                            <p class="subtitle is-6 mt-1 is-size-7-mobile" :class="{'has-text-grey-dark' : mode == 'dark'}">{{ $t('message.expected_format_for_direct_input') }}</p>
                                         </div>
                                     </div>
                                     <div class="content">
@@ -347,7 +347,7 @@
                                     </div>
                                 </div>
                                 <footer class="card-footer">
-                                    <a role="button" tabindex="0" class="card-footer-item is-relative" @click.stop="submitDirectInput">
+                                    <a role="button" tabindex="0" class="card-footer-item is-relative is-link" @click.stop="submitDirectInput">
                                         {{ $t('label.submit') }}
                                     </a>
                                 </footer>
@@ -358,7 +358,7 @@
                 <!-- Supported migration resources -->
                 <h2 class="title is-5 has-text-grey-dark">{{ $t('heading.supported_migration_formats') }}</h2>
                 <div class="block is-size-7-mobile">
-                    <LucideTriangleAlert class="inline icon-size-1 has-text-warning-dark" />
+                    <LucideTriangleAlert class="inline icon-size-1 has-text-warning-30" />
                     {{  $t('message.do_not_set_password_or_encryption') }}
                 </div>
                 <table class="table is-size-7-mobile is-fullwidth">

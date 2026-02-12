@@ -723,7 +723,7 @@
                             <VueButton nativeType="submit" :id="isEditMode ? 'btnUpdate' : 'btnCreate'" :isLoading="form.isBusy" class="is-rounded" >{{ isEditMode ? $t('label.save') : $t('label.create') }}</VueButton>
                         </p>
                         <p class="control" v-if="form.otp_type && form.secret">
-                            <button id="btnPreview" type="button" class="button is-success is-rounded" @click="previewOTP">{{ $t('label.test') }}</button>
+                            <button id="btnPreview" type="button" class="button is-success is-rounded has-text-white" @click="previewOTP">{{ $t('label.test') }}</button>
                         </p>
                         <NavigationButton action="cancel" :useLinkTag="false" @canceled="cancelCreation" />
                     </template>

@@ -34,7 +34,7 @@
         <div class="column has-text-grey">
             <UseColorMode v-slot="{ mode }">
                 <span v-if="appSettings.latestRelease" class="mt-2" :class="mode == 'dark' ? 'has-text-warning' : 'has-text-warning-dark'">
-                    <span class="release-flag"></span>{{ $t('message.x_is_available', { version: appSettings.latestRelease }) }}&nbsp;<a class="is-size-7" href="https://github.com/Bubka/2FAuth/releases">{{ $t('link.view_on_github') }}</a>
+                    <span class="release-flag"></span>{{ $t('message.x_is_available', { version: appSettings.latestRelease }) }}&nbsp;<a class="is-size-7 is-link" href="https://github.com/Bubka/2FAuth/releases">{{ $t('link.view_on_github') }}</a>
                 </span>
                 <span v-if="isUpToDate">
                     <LucideCheck v-if="isUpToDate" class="mr-1 has-text-success inline" />{{ $t('message.you_are_up_to_date') }}

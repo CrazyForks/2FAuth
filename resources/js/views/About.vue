@@ -25,7 +25,7 @@
         </p>
         <img class="about-logo" src="logo.svg" alt="2FAuth logo" />
         <p class="block">
-            ©Bubka <a class="is-size-7" href="https://github.com/Bubka/2FAuth/blob/master/LICENSE">AGPL-3.0 license</a>
+            ©Bubka <a class="is-size-7 is-link" href="https://github.com/Bubka/2FAuth/blob/master/LICENSE">AGPL-3.0 license</a>
         </p>
         <h2 class="title is-5 has-text-grey-light">
             {{ $t('heading.resources') }}
@@ -60,9 +60,9 @@
             {{ $t('heading.credits') }}
         </h2>
         <ul>
-            <li>{{ $t('message.made_with') }}&nbsp;<a href="https://docs.2fauth.app/credits/">Laravel, Bulma CSS, Vue.js and more</a></li>
-            <li>{{ $t('message.ui_icons_by') }}&nbsp;<a href="https://lucide.dev/">Lucide</a>&nbsp;<a class="is-size-7" href="https://lucide.dev/license">(ISC License)</a></li>
-            <li>{{ $t('message.logos_by') }}&nbsp;<a href="https://2fa.directory/">2FA Directory</a>&nbsp;<a class="is-size-7" href="https://github.com/2factorauth/twofactorauth/blob/master/LICENSE.md">(MIT License)</a></li>
+            <li>{{ $t('message.made_with') }}&nbsp;<a class="is-link" href="https://docs.2fauth.app/credits/">Laravel, Bulma CSS, Vue.js and more</a></li>
+            <li>{{ $t('message.ui_icons_by') }}&nbsp;<a class="is-link" href="https://lucide.dev/">Lucide</a>&nbsp;<a class="is-size-7 is-link" href="https://lucide.dev/license">(ISC License)</a></li>
+            <li>{{ $t('message.logos_by') }}&nbsp;<a class="is-link" href="https://2fa.directory/">2FA Directory</a>&nbsp;<a class="is-size-7 is-link" href="https://github.com/2factorauth/twofactorauth/blob/master/LICENSE.md">(MIT License)</a></li>
         </ul>
         <!-- footer -->
         <VueFooter>

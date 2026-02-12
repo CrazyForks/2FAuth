@@ -147,7 +147,7 @@
                     {{ $t('message.security_devices_legend')}}
                 </div>
                 <div class="mt-3">
-                    <a tabindex="0" @click="register" @keyup.enter="register">
+                    <a tabindex="0" class="is-link" @click="register" @keyup.enter="register">
                         <LucideCirclePlus />&nbsp;{{ $t('link.register_a_new_device')}}
                     </a>
                 </div>

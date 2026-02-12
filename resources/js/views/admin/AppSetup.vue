@@ -127,7 +127,7 @@
                             </button>   
                         </div>
                     </div>
-                    <div v-if="testEmailError" class="about-debug box is-family-monospace is-size-7">
+                    <div v-if="testEmailError" class="about-debug box is-family-monospace is-size-7 is-shadowless">
                         <FormFieldError v-if="testEmailError" :error="$t('error.email_sending_failed')" :field="'testEmail'" />
                         {{ testEmailError }}
                     </div>
@@ -137,7 +137,7 @@
                         <p class="help">{{ $t('field.health_endpoint.help') }}</p>
                     </div>
                     <div class="field mb-5">
-                        <a id="lnkHealthCheck" target="_blank" :href="healthEndPoint">{{ healthEndPointFullPath }}</a>
+                        <a id="lnkHealthCheck" class="is-link" target="_blank" :href="healthEndPoint">{{ healthEndPointFullPath }}</a>
                     </div>
                     <h4 class="title is-4 pt-5 has-text-grey-light">{{ $t('heading.storage') }}</h4>
                     <!-- store icons in database -->
@@ -165,7 +165,7 @@
                 <div class="field">
                     <label for="btnCopyEnvVars" class="label">{{ $t('label.variables') }}</label>
                 </div>
-                <div v-if="infos" class="about-debug box is-family-monospace is-size-7">
+                <div v-if="infos" class="about-debug box is-family-monospace is-size-7 is-shadowless">
                     <CopyButton id="btnCopyEnvVars" :token="listInfos?.innerText" />
                     <ul ref="listInfos" id="listInfos">
                         <li v-for="(value, preference) in infos" :value="value" :key="preference">
@@ -173,7 +173,7 @@
                         </li>
                     </ul>
                 </div>
-                <div v-else-if="infos === null" class="about-debug box is-family-monospace is-size-7 has-text-warning-dark">
+                <div v-else-if="infos === null" class="about-debug box is-family-monospace is-size-7 has-text-warning-dark is-shadowless">
                     {{ $t('error.error_during_data_fetching') }}
                 </div>
             </FormWrapper>

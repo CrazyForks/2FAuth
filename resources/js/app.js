@@ -1,9 +1,9 @@
-import '@2fauth/styles/src/app.scss';
-
 import i18n from './i18n'
 import Notifications from '@kyvg/vue3-notification'
 import App from './App.vue'
 import router from './router'
+
+import '@2fauth/styles/src/app.scss';
 
 const app = createApp(App)
 
