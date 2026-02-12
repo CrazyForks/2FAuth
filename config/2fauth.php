@@ -132,6 +132,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Feature flags
+    | List of supported features. Each item is the feature name in camelCase.
+    |--------------------------------------------------------------------------
+    |
+    */
+    'features' => [
+        'iconPack',
+        'sharing',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Default values for app (global) settings
     | These settings can be overloaded and persisted using the SettingService
     |--------------------------------------------------------------------------
