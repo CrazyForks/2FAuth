@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class IconService
 {
+    use Traits\ValidatesUrls;
+
     /**
      * Build an icon by fetching the official logo on the internet
      */
@@ -60,12 +61,13 @@ class IconService
      */
     public function buildFromRemoteImage(string $url) : ?string
     {
-        $isRemoteData = Validator::make(
-            [$url],
-            ['url']
-        )->passes() && Str::startsWith($url, ['http://', 'https://']);
+        if (! $this->isPublicRemoteUrl($url)) {
+            Log::notice(sprintf('ImageLink "%s": Requests to this address are not allowed, download aborted', $url));
 
-        return $isRemoteData ? $this->storeRemoteImage($url) : null;
+            return null;
+        }
+
+        return $this->storeRemoteImage($url);
     }
 
     /**
@@ -74,12 +76,23 @@ class IconService
     protected function storeRemoteImage(string $url) : ?string
     {
         try {
-            $path_parts = pathinfo($url);
-            $filename   = Helpers::getRandomFilename($path_parts['extension']);
+            $path_parts = pathinfo(parse_url($url, PHP_URL_PATH) ?: '');
+            $extension  = $path_parts['extension'] ?? null;
+
+            if (! self::IsSupportedFileExtension($extension)) {
+                Log::info(sprintf('Unsupported imageLink file extension at "%s", download aborted', $url));
+
+                return null;
+            }
+
+            $filename = Helpers::getRandomFilename($extension);
 
             try {
                 $response = Http::withOptions([
-                    'proxy' => config('2fauth.config.outgoingProxy'),
+                    'proxy'           => config('2fauth.config.outgoingProxy'),
+                    'allow_redirects' => false,
+                    'connect_timeout' => 5,
+                    'timeout'         => 10,
                 ])->retry(3, 100)->get($url);
 
                 if ($response->successful()) {
@@ -196,6 +209,23 @@ class IconService
         ];
 
         return in_array(Str::lower($mimeType), $acceptedMimeTypes, true);
+    }
+
+    /**
+     * Check if the given file extension is a supported extension for an image file
+     */
+    private static function IsSupportedFileExtension(string $fileExtension) : bool
+    {
+        $acceptedFileExtensions = [
+            'png',
+            'jpg',
+            'jpeg',
+            'webp',
+            'bmp',
+            'svg',
+        ];
+
+        return in_array(Str::lower($fileExtension), $acceptedFileExtensions, true);
     }
 
     /**

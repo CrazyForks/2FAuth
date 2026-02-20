@@ -9,8 +9,6 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Mockery;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
@@ -146,7 +144,7 @@ class IconServiceTest extends FeatureTestCase
     #[DataProviderExternal(IconStoreServiceTest::class, 'supportedMimeTypesProvider')]
     public function test_build_from_remote_image_stores_icon_and_returns_name($name, $base64content, $mimetype)
     {
-        $imageUrl = 'https://' . $name;
+        $imageUrl = 'https://www.2fauth.app/' . $name;
         $resource = base64_decode($base64content);
 
         Http::preventStrayRequests();
@@ -164,20 +162,9 @@ class IconServiceTest extends FeatureTestCase
 
     #[Test]
     #[DataProvider('buildFromRemoteImageInvalidUrlProvider')]
-    public function test_build_from_remote_image_returns_null_when_url_is_invalid()
+    public function test_build_from_remote_image_returns_null_when_url_is_invalid($url)
     {
-        $imageUrl = 'not_a_valid_url';
-
-        $validator = Mockery::mock('stdClass');
-        Validator::swap($validator);
-        Validator::shouldReceive('make')
-            ->once()
-            ->with([$imageUrl], ['url'])
-            ->andReturn($validator);
-
-        Validator::shouldReceive('passes')
-            ->once()
-            ->andReturn(false);
+        $imageUrl = $url;
 
         $this->iconService = $this->app->make(IconService::class);
         $iconName          = $this->iconService->buildFromRemoteImage($imageUrl);
@@ -191,6 +178,9 @@ class IconServiceTest extends FeatureTestCase
     public static function buildFromRemoteImageInvalidUrlProvider()
     {
         return [
+            'NOT_AN_URL' => [
+                'not_a_valid_url'
+            ],
             'FTP' => [
                 'ftp://example.com/file.txt',
             ],
@@ -244,6 +234,19 @@ class IconServiceTest extends FeatureTestCase
         Http::fake([
             $imageUrl => Http::response($resource, 200),
         ]);
+
+        $this->iconService = $this->app->make(IconService::class);
+        $iconName          = $this->iconService->buildFromRemoteImage($imageUrl);
+
+        $this->assertNull($iconName);
+    }
+
+    #[Test]
+    public function test_build_from_remote_image_returns_null_when_remote_is_not_public()
+    {
+        $imageUrl = 'http://localhost/icon.png';
+
+        Http::preventStrayRequests();
 
         $this->iconService = $this->app->make(IconService::class);
         $iconName          = $this->iconService->buildFromRemoteImage($imageUrl);
