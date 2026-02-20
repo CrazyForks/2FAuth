@@ -6,7 +6,15 @@
     import ExportButtons from '@/components/ExportButtons.vue'
     import { UseColorMode } from '@vueuse/components'
     import { useUserStore } from '@/stores/user'
-    import { useNotify, SearchBox, GroupSwitch, OtpDisplay, Dots, DotsController, useVisiblePassword } from '@2fauth/ui'
+    import {
+        useNotify,
+        SearchBox,
+        GroupSwitch,
+        OtpDisplay,
+        Dots,
+        DotsController,
+        useVisiblePassword
+    } from '@2fauth/ui'
     import { useBusStore } from '@/stores/bus'
     import { useTwofaccounts } from '@/stores/twofaccounts'
     import { useGroups } from '@/stores/groups'
@@ -356,66 +364,191 @@
 <template>
     <UseColorMode v-slot="{ mode }">
     <div>
-        <GroupSwitch
-            v-if="showGroupSwitch"
-            v-model:is-visible="showGroupSwitch"
-            v-model:active-group="user.preferences.activeGroup"
-            :groups="groups.items"
-            @active-group-changed="saveActiveGroup"
-            @show-group-less="twofaccounts.groupLessOnly = true">
-                <RouterLink :to="{ name: 'groups' }" >{{ $t('link.manage_groups') }}</RouterLink>
-        </GroupSwitch>
-        <DestinationGroupSelector
-            v-if="showDestinationGroupSelector"
-            v-model:showDestinationGroupSelector="showDestinationGroupSelector"
-            v-model:selectedAccountsIds="twofaccounts.selectedIds"
-            :groups="groups.items"
-            @accounts-moved="postGroupAssignementUpdate">
-        </DestinationGroupSelector>
-        <!-- header -->
-        <div class="header" v-if="showAccounts || showGroupSwitch">
-            <div class="columns is-gapless is-mobile is-centered">
-                <div class="column is-three-quarters-mobile is-one-third-tablet is-one-quarter-desktop is-one-quarter-widescreen is-one-quarter-fullhd">
-                    <!-- search -->
-                    <SearchBox v-model:keyword="twofaccounts.filter"/>
-                    <!-- toolbar -->
-                    <Toolbar v-if="bus.inManagementMode"
-                        v-model:sortOrder="user.preferences.sortOrder"
-                        :selectedCount="twofaccounts.selectedCount"
-                        @clear-selected="twofaccounts.selectNone()"
-                        @select-all="twofaccounts.selectAll()"
-                        @sort-asc="twofaccounts.sortAsc()"
-                        @sort-desc="twofaccounts.sortDesc()">
-                    </Toolbar>
-                    <!-- group switch toggle -->
-                    <div v-else class="has-text-centered">
-                        <div class="columns">
-                            <div class="column" v-if="showGroupSwitch">
-                                <button type="button" id="btnHideGroupSwitch" :title="$t('tooltip.hide_group_selector')" tabindex="1" class="button is-text is-like-text has-text-grey-dark" :class="{'has-text-grey' : mode != 'dark'}" @click.stop="showGroupSwitch = !showGroupSwitch">
-                                    {{ $t('label.select_accounts_to_show') }}
-                                </button>
-                            </div>
-                            <div class="column" v-else>
-                                <button type="button" id="btnShowGroupSwitch" :title="$t('tooltip.show_group_selector')" tabindex="1" class="button is-text is-like-text has-text-grey-dark" :class="{'has-text-grey' : mode != 'dark'}" @click.stop="showGroupSwitch = !showGroupSwitch">
-                                    <template v-if="groups.current">
-                                        {{ groups.current }} ({{ twofaccounts.filteredCount }})&nbsp;
-                                    </template>
-                                    <template v-else-if="twofaccounts.groupLessOnly">
-                                        {{ $t('label.group_less') }} ({{ twofaccounts.filteredCount }})&nbsp;
-                                    </template>
-                                    <template v-else>
-                                        {{ $t('label.all') }} ({{ twofaccounts.filteredCount }})&nbsp;
-                                    </template>
-                                    <LucideChevronDown class="mt-1" />
-                                </button>
-                            </div>
+        <StackLayout>
+            <template #header>
+                <!-- header -->
+                <div class="header" v-if="showAccounts || showGroupSwitch">
+                    <div class="columns is-gapless is-mobile is-centered">
+                        <div class="column is-three-quarters-mobile is-one-third-tablet is-one-quarter-desktop is-one-quarter-widescreen is-one-quarter-fullhd">
+                            <!-- search -->
+                            <SearchBox v-model:keyword="twofaccounts.filter"/>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </template>
+            <template #subheader>
+                <!-- toolbar -->
+                <Toolbar v-if="bus.inManagementMode"
+                    v-model:sortOrder="user.preferences.sortOrder"
+                    :selectedCount="twofaccounts.selectedCount"
+                    @clear-selected="twofaccounts.selectNone()"
+                    @select-all="twofaccounts.selectAll()"
+                    @sort-asc="twofaccounts.sortAsc()"
+                    @sort-desc="twofaccounts.sortDesc()">
+                </Toolbar>
+                <!-- group switch toggle -->
+                <div v-else class="has-text-centered">
+                    <div v-if="showGroupSwitch">
+                        <button type="button" id="btnHideGroupSwitch" :title="$t('tooltip.hide_group_selector')" tabindex="1" class="button is-text is-like-text has-text-grey-dark" :class="{'has-text-grey' : mode != 'dark'}" @click.stop="showGroupSwitch = !showGroupSwitch">
+                            {{ $t('label.select_accounts_to_show') }}
+                        </button>
+                    </div>
+                    <div v-else>
+                        <button type="button" id="btnShowGroupSwitch" :title="$t('tooltip.show_group_selector')" tabindex="1" class="button is-text is-like-text has-text-grey-dark" :class="{'has-text-grey' : mode != 'dark'}" @click.stop="showGroupSwitch = !showGroupSwitch">
+                            <template v-if="groups.current">
+                                {{ groups.current }} ({{ twofaccounts.filteredCount }})&nbsp;
+                            </template>
+                            <template v-else-if="twofaccounts.groupLessOnly">
+                                {{ $t('label.group_less') }} ({{ twofaccounts.filteredCount }})&nbsp;
+                            </template>
+                            <template v-else>
+                                {{ $t('label.all') }} ({{ twofaccounts.filteredCount }})&nbsp;
+                            </template>
+                            <LucideChevronDown class="mt-1" />
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <template #content>
+                <GroupSwitch
+                    v-if="showGroupSwitch"
+                    v-model:is-visible="showGroupSwitch"
+                    v-model:active-group="user.preferences.activeGroup"
+                    :groups="groups.items"
+                    @active-group-changed="saveActiveGroup"
+                    @show-group-less="twofaccounts.groupLessOnly = true">
+                        <RouterLink :to="{ name: 'groups' }" >{{ $t('link.manage_groups') }}</RouterLink>
+                </GroupSwitch>
+                <DestinationGroupSelector
+                    v-if="showDestinationGroupSelector"
+                    v-model:showDestinationGroupSelector="showDestinationGroupSelector"
+                    v-model:selectedAccountsIds="twofaccounts.selectedIds"
+                    :groups="groups.items"
+                    @accounts-moved="postGroupAssignementUpdate">
+                </DestinationGroupSelector>
+                <!-- show accounts list -->
+                <div class="container" v-if="showAccounts" :class="bus.inManagementMode ? 'is-edit-mode' : ''">
+                    <!-- accounts -->
+                    <div class="accounts">
+                        <span id="dv" class="columns is-multiline m-0" :class="{ 'is-centered': user.preferences.displayMode === 'grid' }">
+                            <div :class="[user.preferences.displayMode === 'grid' ? 'tfa-grid' : 'tfa-list']" class="column is-narrow" v-for="account in twofaccounts.filtered" :key="account.id">
+                                <div class="tfa-container">
+                                    <transition name="slideCheckbox">
+                                        <div class="tfa-cell tfa-checkbox" v-if="bus.inManagementMode">
+                                            <div class="field">
+                                                <input class="is-checkradio is-small" :class="mode == 'dark' ? 'is-white':'is-info'" :id="'ckb_' + account.id" :value="account.id" type="checkbox" :name="'ckb_' + account.id" v-model="twofaccounts.selectedIds">
+                                                <label tabindex="0" :for="'ckb_' + account.id" v-on:keypress.space.prevent="twofaccounts.select(account.id)"></label>
+                                            </div>
+                                        </div>
+                                    </transition>
+                                    <div tabindex="0" class="tfa-cell tfa-content is-size-3 is-size-4-mobile" @click.exact="showOrCopy(account)" @keyup.enter="showOrCopy(account)" @click.ctrl="getAndCopyOTP(account)" role="button">  
+                                        <div class="tfa-text has-ellipsis">
+                                            <img v-if="account.icon && user.preferences.showAccountsIcons" role="presentation" class="tfa-icon" :src="$2fauth.config.subdirectory + '/storage/icons/' + account.icon" alt="">
+                                            <img v-else-if="account.icon == null && user.preferences.showAccountsIcons" role="presentation" class="tfa-icon" :src="$2fauth.config.subdirectory + '/storage/noicon.svg'" alt="">
+                                            {{ account.service ? account.service : $t('message.no_service') }}<LucideCircleAlert class="has-text-danger ml-2" v-if="account.account === $t('error.indecipherable')" />
+                                            <span class="is-block has-ellipsis is-family-primary is-size-6 is-size-7-mobile has-text-grey ">{{ account.account }}</span>
+                                        </div>
+                                    </div>
+                                    <transition name="popLater">
+                                        <div v-show="user.preferences.getOtpOnRequest == false && !bus.inManagementMode" class="has-text-right">
+                                            <div v-if="account.otp != undefined">
+                                                <div class="always-on-otp is-clickable has-nowrap has-text-grey is-size-5 ml-4" @click="copyToClipboard(account.otp.password)" @keyup.enter="copyToClipboard(account.otp.password)" :title="$t('tooltip.copy_to_clipboard')">
+                                                    {{ useVisiblePassword(
+                                                            account.otp.password,
+                                                            user.preferences.formatPassword,
+                                                            user.preferences.formatPasswordBy,
+                                                            user.preferences.showOtpAsDot,
+                                                            user.preferences.revealDottedOTP && revealPassword == account.id
+                                                        )
+                                                    }}
+                                                </div>
+                                                <div class="has-nowrap" style="line-height: 0.9;">
+                                                    <span v-if="user.preferences.showNextOtp" class="always-on-otp is-clickable has-nowrap has-text-grey is-size-7 mr-2" :class="opacities[account.period]" @click="copyToClipboard(account.otp.next_password)" @keyup.enter="copyToClipboard(account.otp.next_password)" :title="$t('tooltip.copy_next_password')">
+                                                        {{ useVisiblePassword(
+                                                                account.otp.next_password,
+                                                                user.preferences.formatPassword,
+                                                                user.preferences.formatPasswordBy,
+                                                                user.preferences.showOtpAsDot,
+                                                                user.preferences.revealDottedOTP && revealPassword == account.id
+                                                            )
+                                                        }}
+                                                    </span>
+                                                    <Dots
+                                                        v-if="account.otp_type.includes('totp')"
+                                                        ref="dotsRefs"
+                                                        :class="'is-inline-block'"
+                                                        :isCondensed="true"
+                                                        :period="account.period" />
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                <!-- get hotp button -->
+                                                <button type="button" class="button tag" :class="mode == 'dark' ? 'is-dark' : 'is-white'" @click="showOTP(account)" :title="$t('tooltip.import_this_account')">
+                                                    {{ $t('label.generate') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </transition>
+                                    <transition name="popLater" v-if="user.preferences.showOtpAsDot && user.preferences.revealDottedOTP">
+                                        <div v-show="user.preferences.getOtpOnRequest == false && !bus.inManagementMode" class="has-text-right">
+                                            <button v-if="revealPassword == account.id" type="button" class="pr-0 button is-ghost has-text-grey-dark" @click.stop="revealPassword = null">
+                                                <LucideEye />
+                                            </button>
+                                            <button v-else type="button" class="pr-0 button is-ghost has-text-grey-dark" @click.stop="revealPassword = account.id">
+                                                <LucideEyeOff />
+                                            </button>
+                                        </div>
+                                    </transition>
+                                    <transition name="fadeInOut">
+                                        <div class="tfa-cell tfa-edit has-text-grey" v-if="bus.inManagementMode">
+                                            <RouterLink :to="{ name: 'editAccount', params: { twofaccountId: account.id }}" class="tag is-rounded mr-1" :class="mode == 'dark' ? 'is-dark' : 'is-white'">
+                                                {{ $t('link.edit') }}
+                                            </RouterLink>
+                                            <RouterLink :to="{ name: 'showQRcode', params: { twofaccountId: account.id }}" class="tag is-rounded" :class="mode == 'dark' ? 'is-dark' : 'is-white'" :title="$t('tooltip.show_qrcode')">
+                                                <LucideQrCode class="icon-size-1" />
+                                            </RouterLink>
+                                        </div>
+                                    </transition>
+                                    <transition name="fadeInOut">
+                                        <div class="drag-handle tfa-cell tfa-dots has-text-grey" v-if="bus.inManagementMode">
+                                            <LucideMenu />
+                                        </div>
+                                    </transition>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </template>
+            <template #footer v-if="showGroupSwitch">
+                <VueFooter :show-buttons="true">
+                    <NavigationButton action="close" :use-link-tag="false" @closed="showGroupSwitch = false" />
+                </VueFooter>
+            </template>
+            <template #footer v-else-if="! showDestinationGroupSelector">
+                <VueFooter v-if="bus.inManagementMode && !showDestinationGroupSelector">
+                    <template #default>
+                        <ActionButtons
+                            v-model:inManagementMode="bus.inManagementMode"
+                            :areDisabled="twofaccounts.hasNoneSelected"
+                            @move-button-clicked="showDestinationGroupSelector = true"
+                            @delete-button-clicked="deleteAccounts"
+                            @export-button-clicked="showExportFormatSelector = true">
+                        </ActionButtons>
+                    </template>
+                    <template #subpart>
+                        <button type="button" id="lnkExitEdit" class="button is-ghost is-like-text" @click.stop="exitManagementMode">{{ $t('label.done') }}</button>
+                    </template>
+                </VueFooter>
+                <VueFooter v-else>
+                    <template #default>
+                        <ActionButtons v-model:inManagementMode="bus.inManagementMode" />
+                    </template>
+                </VueFooter>
+            </template>
+        </StackLayout>
         <!-- export modal -->
-        <Modal v-model="showExportFormatSelector" :isFullHeight="true">
+        <Modal v-model="showExportFormatSelector">
             <ExportButtons
                 @export-twofauth-format="twofaccounts.export()"
                 @export-otpauth-format="twofaccounts.export('otpauth')">
@@ -451,118 +584,6 @@
                 @stepped-up="turnDotsOn(period.period, $event)"
             ></DotsController>
         </span>
-        <!-- show accounts list -->
-        <div class="container" v-if="showAccounts" :class="bus.inManagementMode ? 'is-edit-mode' : ''">
-            <!-- accounts -->
-            <div class="accounts">
-                <span id="dv" class="columns is-multiline" :class="{ 'is-centered': user.preferences.displayMode === 'grid' }">
-                    <div :class="[user.preferences.displayMode === 'grid' ? 'tfa-grid' : 'tfa-list']" class="column is-narrow" v-for="account in twofaccounts.filtered" :key="account.id">
-                        <div class="tfa-container">
-                            <transition name="slideCheckbox">
-                                <div class="tfa-cell tfa-checkbox" v-if="bus.inManagementMode">
-                                    <div class="field">
-                                        <input class="is-checkradio is-small" :class="mode == 'dark' ? 'is-white':'is-info'" :id="'ckb_' + account.id" :value="account.id" type="checkbox" :name="'ckb_' + account.id" v-model="twofaccounts.selectedIds">
-                                        <label tabindex="0" :for="'ckb_' + account.id" v-on:keypress.space.prevent="twofaccounts.select(account.id)"></label>
-                                    </div>
-                                </div>
-                            </transition>
-                            <div tabindex="0" class="tfa-cell tfa-content is-size-3 is-size-4-mobile" @click.exact="showOrCopy(account)" @keyup.enter="showOrCopy(account)" @click.ctrl="getAndCopyOTP(account)" role="button">  
-                                <div class="tfa-text has-ellipsis">
-                                    <img v-if="account.icon && user.preferences.showAccountsIcons" role="presentation" class="tfa-icon" :src="$2fauth.config.subdirectory + '/storage/icons/' + account.icon" alt="">
-                                    <img v-else-if="account.icon == null && user.preferences.showAccountsIcons" role="presentation" class="tfa-icon" :src="$2fauth.config.subdirectory + '/storage/noicon.svg'" alt="">
-                                    {{ account.service ? account.service : $t('message.no_service') }}<LucideCircleAlert class="has-text-danger ml-2" v-if="account.account === $t('error.indecipherable')" />
-                                    <span class="is-block has-ellipsis is-family-primary is-size-6 is-size-7-mobile has-text-grey ">{{ account.account }}</span>
-                                </div>
-                            </div>
-                            <transition name="popLater">
-                                <div v-show="user.preferences.getOtpOnRequest == false && !bus.inManagementMode" class="has-text-right">
-                                    <div v-if="account.otp != undefined">
-                                        <div class="always-on-otp is-clickable has-nowrap has-text-grey is-size-5 ml-4" @click="copyToClipboard(account.otp.password)" @keyup.enter="copyToClipboard(account.otp.password)" :title="$t('tooltip.copy_to_clipboard')">
-                                            {{ useVisiblePassword(
-                                                    account.otp.password,
-                                                    user.preferences.formatPassword,
-                                                    user.preferences.formatPasswordBy,
-                                                    user.preferences.showOtpAsDot,
-                                                    user.preferences.revealDottedOTP && revealPassword == account.id
-                                                )
-                                            }}
-                                        </div>
-                                        <div class="has-nowrap" style="line-height: 0.9;">
-                                            <span v-if="user.preferences.showNextOtp" class="always-on-otp is-clickable has-nowrap has-text-grey is-size-7 mr-2" :class="opacities[account.period]" @click="copyToClipboard(account.otp.next_password)" @keyup.enter="copyToClipboard(account.otp.next_password)" :title="$t('tooltip.copy_next_password')">
-                                                {{ useVisiblePassword(
-                                                        account.otp.next_password,
-                                                        user.preferences.formatPassword,
-                                                        user.preferences.formatPasswordBy,
-                                                        user.preferences.showOtpAsDot,
-                                                        user.preferences.revealDottedOTP && revealPassword == account.id
-                                                    )
-                                                }}
-                                            </span>
-                                            <Dots
-                                                v-if="account.otp_type.includes('totp')"
-                                                ref="dotsRefs"
-                                                :class="'is-inline-block'"
-                                                :isCondensed="true"
-                                                :period="account.period" />
-                                        </div>
-                                    </div>
-                                    <div v-else>
-                                        <!-- get hotp button -->
-                                        <button type="button" class="button tag" :class="mode == 'dark' ? 'is-dark' : 'is-white'" @click="showOTP(account)" :title="$t('tooltip.import_this_account')">
-                                            {{ $t('label.generate') }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </transition>
-                            <transition name="popLater" v-if="user.preferences.showOtpAsDot && user.preferences.revealDottedOTP">
-                                <div v-show="user.preferences.getOtpOnRequest == false && !bus.inManagementMode" class="has-text-right">
-                                    <button v-if="revealPassword == account.id" type="button" class="pr-0 button is-ghost has-text-grey-dark" @click.stop="revealPassword = null">
-                                        <LucideEye />
-                                    </button>
-                                    <button v-else type="button" class="pr-0 button is-ghost has-text-grey-dark" @click.stop="revealPassword = account.id">
-                                        <LucideEyeOff />
-                                    </button>
-                                </div>
-                            </transition>
-                            <transition name="fadeInOut">
-                                <div class="tfa-cell tfa-edit has-text-grey" v-if="bus.inManagementMode">
-                                    <RouterLink :to="{ name: 'editAccount', params: { twofaccountId: account.id }}" class="tag is-rounded mr-1" :class="mode == 'dark' ? 'is-dark' : 'is-white'">
-                                        {{ $t('link.edit') }}
-                                    </RouterLink>
-                                    <RouterLink :to="{ name: 'showQRcode', params: { twofaccountId: account.id }}" class="tag is-rounded" :class="mode == 'dark' ? 'is-dark' : 'is-white'" :title="$t('tooltip.show_qrcode')">
-                                        <LucideQrCode class="icon-size-1" />
-                                    </RouterLink>
-                                </div>
-                            </transition>
-                            <transition name="fadeInOut">
-                                <div class="drag-handle tfa-cell tfa-dots has-text-grey" v-if="bus.inManagementMode">
-                                    <LucideMenu />
-                                </div>
-                            </transition>
-                        </div>
-                    </div>
-                </span>
-            </div>
-            <VueFooter v-if="bus.inManagementMode && !showDestinationGroupSelector">
-                <template #default>
-                    <ActionButtons
-                        v-model:inManagementMode="bus.inManagementMode"
-                        :areDisabled="twofaccounts.hasNoneSelected"
-                        @move-button-clicked="showDestinationGroupSelector = true"
-                        @delete-button-clicked="deleteAccounts"
-                        @export-button-clicked="showExportFormatSelector = true">
-                    </ActionButtons>
-                </template>
-                <template #subpart>
-                    <button type="button" id="lnkExitEdit" class="button is-ghost is-like-text" @click.stop="exitManagementMode">{{ $t('label.done') }}</button>
-                </template>
-            </VueFooter>
-            <VueFooter v-else>
-                <template #default>
-                    <ActionButtons v-model:inManagementMode="bus.inManagementMode" />
-                </template>
-            </VueFooter>
-        </div>
     </div>
     </UseColorMode>
 </template>

@@ -52,6 +52,7 @@ import {
 } from '@2fauth/formcontrols'
 
 import {
+    StackLayout,
     FormWrapper,
     Modal,
     ResponsiveWidthWrapper,
@@ -62,6 +63,7 @@ import {
 app
     .component('ResponsiveWidthWrapper', ResponsiveWidthWrapper)
     .component('Spinner', Spinner)
+    .component('StackLayout', StackLayout)
     .component('FormWrapper', FormWrapper)
     .component('VueFooter', VueFooter)
     .component('Modal', Modal)

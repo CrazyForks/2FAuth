@@ -233,15 +233,17 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'settings.options'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'settings.options'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
                 <form>
                     <!-- <input type="hidden" name="isReady" id="isReady" :value="isReady" /> -->
                     <!-- user preferences -->
                     <div class="block">
-                        <h4 class="title is-4 has-text-grey-light">{{ $t('heading.general') }}</h4>
+                        <h4 class="title is-4">{{ $t('heading.general') }}</h4>
                         <div v-if="appSettings.lockedPreferences.length > 0" class="notification is-warning">
                             {{ $t('message.settings_managed_by_administrator') }}
                         </div>
@@ -292,7 +294,7 @@
                         <!-- show email in footer -->
                         <FormCheckbox v-model="user.preferences.showEmailInFooter" @update:model-value="val => savePreference('showEmailInFooter', val)" fieldName="showEmailInFooter" :isLocked="appSettings.lockedPreferences.includes('showEmailInFooter')" label="field.show_email_in_footer" help="field.show_email_in_footer.help" />
                         
-                        <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.groups') }}</h4>
+                        <h4 class="title is-4 pt-4">{{ $t('heading.groups') }}</h4>
                         <!-- default group -->
                         <FormSelect v-model="user.preferences.defaultGroup" @update:model-value="val => savePreference('defaultGroup', val)" :options="groupsList" fieldName="defaultGroup" label="field.default_group" help="field.default_group.help" />
                         <!-- retain active group -->
@@ -300,7 +302,7 @@
                         <!-- always return to default group after copying -->
                         <FormCheckbox v-model="user.preferences.viewDefaultGroupOnCopy" @update:model-value="val => savePreference('viewDefaultGroupOnCopy', val)" fieldName="viewDefaultGroupOnCopy" :isLocked="appSettings.lockedPreferences.includes('viewDefaultGroupOnCopy')" label="field.view_default_group_on_copy" help="field.view_default_group_on_copy.help" />
                         
-                        <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.security') }}</h4>
+                        <h4 class="title is-4 pt-4">{{ $t('heading.security') }}</h4>
                         <!-- auto lock -->
                         <FormSelect v-model="user.preferences.kickUserAfter" @update:model-value="val => savePreference('kickUserAfter', val)" :options="kickUserAfters" fieldName="kickUserAfter" :isLocked="appSettings.lockedPreferences.includes('kickUserAfter')" label="field.auto_lock" help="field.auto_lock.help" />
                         <!-- get OTP on request -->
@@ -318,13 +320,13 @@
                         <!-- show next OTP -->
                         <FormCheckbox v-model="user.preferences.showNextOtp" @update:model-value="val => savePreference('showNextOtp', val)" fieldName="showNextOtp" :isLocked="appSettings.lockedPreferences.includes('showNextOtp')" label="field.show_next_otp" help="field.show_next_otp.help" />
                         
-                        <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.notifications') }}</h4>
+                        <h4 class="title is-4 pt-4">{{ $t('heading.notifications') }}</h4>
                         <!-- on new device -->
                         <FormCheckbox v-model="user.preferences.notifyOnNewAuthDevice" @update:model-value="val => savePreference('notifyOnNewAuthDevice', val)" fieldName="notifyOnNewAuthDevice" :isLocked="appSettings.lockedPreferences.includes('notifyOnNewAuthDevice')" label="field.notify_on_new_auth_device" help="field.notify_on_new_auth_device.help" />
                         <!-- on failed login -->
                         <FormCheckbox v-model="user.preferences.notifyOnFailedLogin" @update:model-value="val => savePreference('notifyOnFailedLogin', val)" fieldName="notifyOnFailedLogin" :isLocked="appSettings.lockedPreferences.includes('notifyOnFailedLogin')" label="field.notify_on_failed_login" help="field.notify_on_failed_login.help" />
                             
-                        <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.data_input') }}</h4>
+                        <h4 class="title is-4 pt-4">{{ $t('heading.data_input') }}</h4>
                         <!-- auto-save QrCoded account -->
                         <FormCheckbox v-model="user.preferences.AutoSaveQrcodedAccount" @update:model-value="val => savePreference('AutoSaveQrcodedAccount', val)" fieldName="AutoSaveQrcodedAccount" :isLocked="appSettings.lockedPreferences.includes('AutoSaveQrcodedAccount')" label="field.auto_save_qrcoded_account" help="field.auto_save_qrcoded_account.help" />
                         <!-- basic qrcode -->
@@ -336,11 +338,13 @@
                     </div>
                 </form>
             </FormWrapper>
-        </div>
-        <VueFooter>
-            <template #default>
-                <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.options')" />
-            </template>
-        </VueFooter>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.options')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

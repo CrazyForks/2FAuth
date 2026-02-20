@@ -132,9 +132,11 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'settings.webauthn.devices'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'settings.webauthn.devices'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
                 <div v-if="isDisabled && user.oauth_provider" class="notification is-warning has-text-centered">
                     {{ $t('message.sso_only_x_settings_are_disabled', { auth_method: 'WebAuthn' }) }}
@@ -142,7 +144,7 @@
                 <div v-if="isDisabled && user.authenticated_by_proxy" class="notification is-warning has-text-centered">
                     {{ $t('message.auth_handled_by_proxy') + ' ' + $t('message.manage_auth_at_proxy_level') }}
                 </div>
-                <h4 class="title is-4 has-text-grey-light">{{ $t('heading.security_devices') }}</h4>
+                <h4 class="title is-4">{{ $t('heading.security_devices') }}</h4>
                 <div class="is-size-7-mobile">
                     {{ $t('message.security_devices_legend')}}
                 </div>
@@ -167,7 +169,7 @@
                     </div>
                 </div>
                 <Spinner :isVisible="isFetching && credentials.length === 0" type="list-loading" />
-                <h4 class="title is-4 pt-6 has-text-grey-light">{{ $t('heading.options') }}</h4>
+                <h4 class="title is-4 pt-6">{{ $t('heading.options') }}</h4>
                 <div class="field">
                     {{ $t('message.need_a_security_device_to_enable_options')}}
                 </div>
@@ -184,13 +186,14 @@
                     <p class="help">{{ $t('field.use_webauthn_only.help_bis') }}</p>
                     <p class="help mt-3">{{ $t('field.use_webauthn_only.help_ter') }}</p>
                 </form>
-                <!-- footer -->
-                <VueFooter>
-                    <template #default>
-                        <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.webauthn.devices')" />
-                    </template>
-                </VueFooter>
             </FormWrapper>
-        </div>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.webauthn.devices')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

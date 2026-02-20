@@ -96,12 +96,14 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'admin.appSetup'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'admin.appSetup'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
                 <form>
-                    <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.general') }}</h4>
+                    <h4 class="title is-4 pt-4">{{ $t('heading.general') }}</h4>
                     <!-- Check for update -->
                     <FormCheckbox v-model="appSettings.checkForUpdate" @update:model-value="val => saveSetting('checkForUpdate', val)" fieldName="checkForUpdate" label="field.check_for_update" help="field.check_for_update.help" />
                     <VersionChecker />
@@ -139,16 +141,16 @@
                     <div class="field mb-5">
                         <a id="lnkHealthCheck" class="is-link" target="_blank" :href="healthEndPoint">{{ healthEndPointFullPath }}</a>
                     </div>
-                    <h4 class="title is-4 pt-5 has-text-grey-light">{{ $t('heading.storage') }}</h4>
+                    <h4 class="title is-4 pt-5">{{ $t('heading.storage') }}</h4>
                     <!-- store icons in database -->
                     <FormCheckbox v-model="appSettings.storeIconsInDatabase" @update:model-value="val => saveSetting('storeIconsInDatabase', val)" fieldName="storeIconsInDatabase" label="field.store_icon_to_database" help="field.store_icon_to_database.help" />
                     <p class="help">{{ $t('field.store_icon_to_database.help_bis') }}</p>
-                    <h4 class="title is-4 pt-5 has-text-grey-light">{{ $t('heading.security') }}</h4>
+                    <h4 class="title is-4 pt-5">{{ $t('heading.security') }}</h4>
                     <!-- protect db -->
                     <FormCheckbox v-model="appSettings.useEncryption" @update:model-value="val => saveSetting('useEncryption', val)" fieldName="useEncryption" label="field.use_encryption" help="field.use_encryption.help" />
                 </form>
 
-                <h4 class="title is-4 pt-5 has-text-grey-light">{{ $t('heading.environment') }}</h4>
+                <h4 class="title is-4 pt-5">{{ $t('heading.environment') }}</h4>
                 <!-- cache management -->
                 <div class="field">
                     <label for="btnClearCache" class="label">{{ $t('field.cache_management') }}</label>
@@ -177,11 +179,13 @@
                     {{ $t('error.error_during_data_fetching') }}
                 </div>
             </FormWrapper>
-        </div>
-        <VueFooter>
-            <template #default>
-                <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.appSetup')" />
-            </template>
-        </VueFooter>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.appSetup')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

@@ -105,11 +105,13 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'admin.users'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'admin.users'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
-                <h4 class="title is-4 has-text-grey-light">{{ $t('heading.users') }}</h4>
+                <h4 class="title is-4">{{ $t('heading.users') }}</h4>
                 <div class="is-size-7-mobile">
                     {{ $t('message.admin_users_legend')}}
                 </div>
@@ -169,13 +171,14 @@
                 <div v-else class="mt-4 pl-3">
                     {{ $t('message.no_result') }}
                 </div>
-                <!-- footer -->
-                <VueFooter>
-                    <template #default>
-                        <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.users')" />
-                    </template>
-                </VueFooter>
             </FormWrapper>
-        </div>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.users')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

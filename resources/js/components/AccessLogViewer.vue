@@ -212,8 +212,8 @@
                         <LucideSmartphone v-if="authentication.device=='phone'" class="log-icon-bg" />
                         <LucideTablet v-else-if="authentication.device=='tablet'" class="log-icon-bg" />
                         <LucideMonitor v-else class="log-icon-bg" />
-                        <LucideX v-if="isFailedEntry(authentication)" stroke-width=3 class="log-icon-mark" :class="'has-text-danger' + (mode == 'dark' ? '-dark' : '')" />
-                        <LucideCheck v-else stroke-width=3 class="log-icon-mark" :class="'has-text-success' + (mode == 'dark' ? '-dark' : '')" />
+                        <LucideX v-if="isFailedEntry(authentication)" stroke-width=3 class="log-icon-mark" :class="'has-text-danger'" />
+                        <LucideCheck v-else stroke-width=3 class="log-icon-mark" :class="'has-text-success-50'" />
                     </div>
                 </div>
             </UseColorMode>

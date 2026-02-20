@@ -551,208 +551,212 @@
 
 <template>
     <UseColorMode v-slot="{ mode }">
-    <div>
-        <!-- otp display modal (when auto-save is enabled) -->
-        <Modal v-if="user.preferences.AutoSaveQrcodedAccount" v-model="showOtpInModal">
-            <OtpDisplay
-                ref="OtpDisplayForAutoSave"
-                :accountParams="accountParams"
-                :preferences="user.preferences"
-                :twofaccountService="twofaccountService"
-                :iconPathPrefix="$2fauth.config.subdirectory"
-                @please-close-me="router.push({ name: 'accounts' })"
-                @please-update-activeGroup="saveActiveGroup"
-                @otp-copied-to-clipboard="notify.success({ text: t('notification.copied_to_clipboard') })"
-                @error="(error) => errorHandler.show(error)"
-            />
-        </Modal>
-        <!-- Quick form (right after a qr code upload) -->
-        <div v-if="!isEditMode && showQuickForm" class="modal modal-otp is-active">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-                <div class="modal-slot has-text-centered is-shadowless">
-                    <form @submit.prevent="createAccount" @keydown="form.onKeydown($event)">
-                        <div>
-                            <FormFieldError v-if="iconForm.errors.hasAny('icon')" :error="iconForm.errors.get('icon')" :field="'icon'" class="help-for-file" />
-                            <label for="filUploadIcon" class="add-icon-button pt-2" v-if="!tempIcon">
-                                <input id="filUploadIcon" class="file-input" type="file" accept="image/*" v-on:change="uploadIcon" ref="iconInput">
-                                <LucideImageUp class="icon-size-3" />
-                            </label>
-                            <button type="button" class="delete delete-icon-button is-medium" v-if="tempIcon" @click.prevent="deleteTempIcon"></button>
-                            <OtpDisplay
-                                ref="OtpDisplayForQuickForm"
-                                :accountParams="form.data()"
-                                :preferences="user.preferences"
-                                :twofaccountService="twofaccountService"
-                                :iconPathPrefix="$2fauth.config.subdirectory"
-                                :can_autoCloseTimeout="false"
-                                @increment-hotp="incrementHotp"
-                                @please-close-me="ShowTwofaccountInModal = false"
-                                @please-update-activeGroup="saveActiveGroup"
-                                @otp-copied-to-clipboard="notify.success({ text: t('notification.copied_to_clipboard') })"
-                                @validation-error="mapDisplayerErrors"
-                                @error="(error) => errorHandler.show(error)"
-                            />
-                        </div>
-                        <div v-if="form.errors.any()" role="alert" class="m-3">
-                            <ul v-for="(field, index) in form.errors.errors" :key="index" class="help is-danger">
-                                <li v-for="(error, index) in field" :key="index">{{ error }}</li>
-                            </ul>
-                        </div>
-                        <div class="field is-grouped is-grouped-centered">
-                            <div class="control">
-                                <VueButton nativeType="submit" :isLoading="form.isBusy" >{{ $t('label.save') }}</VueButton>
-                            </div>
-                            <NavigationButton action="cancel" :isText="true" :isRounded="false" :useLinkTag="false" @canceled="cancelCreation" />
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Full form -->
-        <FormWrapper v-if="showAdvancedForm" :title="isEditMode ? 'heading.edit_account' : 'heading.new_account'">
-            <form @submit.prevent="handleSubmit" @keydown="form.onKeydown($event)">
-                <!-- qcode fileupload -->
-                <div v-if="!isEditMode" class="field is-grouped">
-                    <div class="control">
-                        <div role="button" tabindex="0" class="file is-small" :class="{ 'is-black': mode == 'dark' }" @keyup.enter="qrcodeInputLabel.click()">
-                            <label class="file-label" :title="$t('tooltip.use_qrcode')" ref="qrcodeInputLabel">
-                                <input inert tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="uploadQrcode" ref="qrcodeInput">
-                                <span class="file-cta">
-                                    <span class="file-label">
-                                        <LucideQrCode class="mr-2" />{{ $t('label.prefill_using_qrcode') }}
-                                    </span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <FormFieldError v-if="qrcodeForm.errors.hasAny('qrcode')" :error="qrcodeForm.errors.get('qrcode')" :field="'qrcode'" class="help-for-file" />
-                <!-- service -->
-                <FormField v-model="form.service" fieldName="service" :errorMessage="form.errors.get('email')" :isDisabled="form.otp_type === 'steamtotp'" label="field.service" :placeholder="$t('field.service.placeholder')" autofocus />
-                <!-- account -->
-                <FormField v-model="form.account" fieldName="account" :errorMessage="form.errors.get('account')" label="field.account" :placeholder="$t('field.account.placeholder')" />
-                <!-- icon upload -->
-                <label v-if="user.preferences.iconSource == 'logolib'" for="icon-collection" class="label">{{ $t('field.icon') }}</label>
-                <!-- try my luck -->
-                <div v-if="user.preferences.iconSource == 'logolib'" class="field has-addons">
-                    <div class="control">
-                        <div class="select">
-                            <select :disabled="!form.service" name="icon-collection" v-model="iconCollection">
-                                <option v-for="collection in iconCollections" :key="collection.text" :value="collection.value">
-                                    {{ collection.text }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div v-if="iconCollectionVariants[iconCollection]" class="control">
-                        <div class="select">
-                            <select :disabled="!form.service" name="icon-collection-variant" v-model="iconCollectionVariant">
-                                <option v-for="variant in iconCollectionVariants[iconCollection]" :key="variant.value" :value="variant.value">
-                                    {{ $t(variant.text) }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <!-- icon pack -->
-                <FormSelect v-else-if="user.preferences.iconSource == 'iconpack'" v-model="iconPack" :options="iconPacks" fieldName="iconPack" :isDisabled="!form.service" label="field.icon">
-                    <button class="button is-ghost" @click="refreshIconPackList" type="button" :title="$t('tooltip.refresh_icon_pack_list')">
-                        <LucideRefreshCw :class="{ 'spinning': isLoading }"/>
-                    </button>
-                </FormSelect>
-                <!-- icon field buttons -->
-                <div class="field is-grouped">
-                    <!-- try my luck button -->
-                    <div class="control">
-                        <VueButton @click="fetchLogo" :color="mode == 'dark' ? 'is-dark' : ''" nativeType="button" :is-loading="fetchingLogo" :disabled="!form.service || !hasSomeIconPack" aria-describedby="lgdTryMyLuck">
-                            <span class="icon is-small">
-                                <LucideWandSparkles />
-                            </span>
-                            <span>{{ $t('label.i_m_lucky') }}</span>
-                        </VueButton>
-                    </div>
-                    <!-- upload icon button -->
-                    <div class="control is-flex">
-                        <div role="button" tabindex="0" class="file mr-3" :class="mode == 'dark' ? 'is-dark' : 'is-white'" @keyup.enter="iconInputLabel.click()">
-                            <label for="filUploadIcon" class="file-label" ref="iconInputLabel">
-                                <input id="filUploadIcon" tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="uploadIcon" ref="iconInput">
-                                <span class="file-cta">
-                                    <span class="file-label">
-                                        <LucideHardDriveUpload class="mr-2" />{{ $t('label.choose_image') }}
-                                    </span>
-                                </span>
-                            </label>
-                        </div>
-                        <span class="tag is-large" :class="mode =='dark' ? 'is-dark' : 'is-white'" v-if="tempIcon">
-                            <img class="icon-preview" :src="$2fauth.config.subdirectory + '/storage/icons/' + tempIcon" :alt="$t('alttext.icon_to_illustrate_the_account')">
-                            <button type="button" class="clear-selection delete is-small" @click.prevent="deleteTempIcon" :aria-label="$t('label.remove_icon')"></button>
-                        </span>
-                    </div>
-                </div>
-                <div class="field">
-                    <FormFieldError v-if="iconForm.errors.hasAny('icon')" :error="iconForm.errors.get('icon')" :field="'icon'" class="help-for-file" />
-                    <p id="lgdTryMyLuck" v-if="user.preferences.getOfficialIcons" class="help">{{ $t('message.i_m_lucky_legend') }}</p>
-                </div>
-                <!-- group -->
-                <FormSelect v-if="groups.length > 0" v-model="form.group_id" :options="groups" fieldName="group_id" label="field.group" help="field.group.help" />
-                <!-- otp type -->
-                <FormToggle v-model="form.otp_type" :isDisabled="isEditMode" :choices="otp_types" fieldName="otp_type" :errorMessage="form.errors.get('otp_type')" label="field.otp_type" help="field.otp_type.help" :hasOffset="true" />
-                <div v-if="form.otp_type != ''">
-                    <!-- secret -->
-                    <FormProtectedField :enableProtection="isEditMode" v-model.trimAll="form.secret" fieldName="secret" :errorMessage="form.errors.get('secret')" label="field.secret" help="field.secret.help" />
-                    <!-- Options -->
-                    <div v-if="form.otp_type !== 'steamtotp'">
-                        <h2 class="title is-4 mt-5 mb-2">{{ $t('heading.options') }}</h2>
-                        <p class="help mb-4">
-                            {{ $t('field.options.help') }}
-                        </p>
-                        <!-- digits -->
-                        <FormToggle v-model="form.digits" :choices="digitsChoices" fieldName="digits" :errorMessage="form.errors.get('digits')" label="field.digits" help="field.digits.help" />
-                        <!-- algorithm -->
-                        <FormToggle v-model="form.algorithm" :choices="algorithms" fieldName="algorithm" :errorMessage="form.errors.get('algorithm')" label="field.algorithm" help="field.algorithm.help" />
-                        <!-- TOTP period -->
-                        <FormField v-if="form.otp_type === 'totp'" pattern="[0-9]{1,4}" :class="'is-half-width-field'" v-model="form.period" fieldName="period" :errorMessage="form.errors.get('period')" label="field.period" help="field.period.help" :placeholder="$t('field.period.placeholder')" />
-                        <!-- HOTP counter -->
-                        <FormProtectedField v-if="form.otp_type === 'hotp'" pattern="[0-9]{1,4}" :enableProtection="isEditMode" :isExpanded="false" v-model="form.counter" fieldName="counter" :errorMessage="form.errors.get('counter')" label="field.counter" :placeholder="$t('field.counter.placeholder')" :help="isEditMode ? 'field.counter.help_lock' : 'field.counter.help'" />
-                    </div>
-                </div>
-                <VueFooter>
-                    <template #default>
-                        <p class="control">
-                            <VueButton nativeType="submit" :id="isEditMode ? 'btnUpdate' : 'btnCreate'" :isLoading="form.isBusy" class="is-rounded" >{{ isEditMode ? $t('label.save') : $t('label.create') }}</VueButton>
-                        </p>
-                        <p class="control" v-if="form.otp_type && form.secret">
-                            <button id="btnPreview" type="button" class="button is-success is-rounded has-text-white" @click="previewOTP">{{ $t('label.test') }}</button>
-                        </p>
-                        <NavigationButton action="cancel" :useLinkTag="false" @canceled="cancelCreation" />
-                    </template>
-                </VueFooter>
-            </form>
-            <!-- otp display modal (for previewing) -->
-            <Modal v-model="ShowTwofaccountInModal">
+    <StackLayout>
+        <template #content>
+            <!-- otp display modal (when auto-save is enabled) -->
+            <Modal v-if="user.preferences.AutoSaveQrcodedAccount" v-model="showOtpInModal">
                 <OtpDisplay
-                    ref="OtpDisplayForAdvancedForm"
-                    :accountParams="form.data()"
+                    ref="OtpDisplayForAutoSave"
+                    :accountParams="accountParams"
                     :preferences="user.preferences"
                     :twofaccountService="twofaccountService"
                     :iconPathPrefix="$2fauth.config.subdirectory"
-                    :can_autoCloseTimeout="false"
-                    @increment-hotp="incrementHotp"
-                    @please-close-me="ShowTwofaccountInModal = false"
+                    @please-close-me="router.push({ name: 'accounts' })"
+                    @please-update-activeGroup="saveActiveGroup"
                     @otp-copied-to-clipboard="notify.success({ text: t('notification.copied_to_clipboard') })"
-                    @validation-error="mapDisplayerErrors"
                     @error="(error) => errorHandler.show(error)"
                 />
             </Modal>
-        </FormWrapper>
-        <div v-if="showSpinner">
-            <Spinner :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
-        </div>
-        <!-- alternatives -->
-        <Modal v-model="showAlternatives">
-            <QrContentDisplay :qrContent="uri" />
-        </Modal>
-    </div>
+            <!-- Quick form (right after a qr code upload) -->
+            <div v-if="!isEditMode && showQuickForm" class="modal modal-otp is-active">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <div class="modal-slot has-text-centered is-shadowless">
+                        <form @submit.prevent="createAccount" @keydown="form.onKeydown($event)">
+                            <div>
+                                <FormFieldError v-if="iconForm.errors.hasAny('icon')" :error="iconForm.errors.get('icon')" :field="'icon'" class="help-for-file" />
+                                <label for="filUploadIcon" class="add-icon-button pt-2" v-if="!tempIcon">
+                                    <input id="filUploadIcon" class="file-input" type="file" accept="image/*" v-on:change="uploadIcon" ref="iconInput">
+                                    <LucideImageUp class="icon-size-3" />
+                                </label>
+                                <button type="button" class="delete delete-icon-button is-medium" v-if="tempIcon" @click.prevent="deleteTempIcon"></button>
+                                <OtpDisplay
+                                    ref="OtpDisplayForQuickForm"
+                                    :accountParams="form.data()"
+                                    :preferences="user.preferences"
+                                    :twofaccountService="twofaccountService"
+                                    :iconPathPrefix="$2fauth.config.subdirectory"
+                                    :can_autoCloseTimeout="false"
+                                    @increment-hotp="incrementHotp"
+                                    @please-close-me="ShowTwofaccountInModal = false"
+                                    @please-update-activeGroup="saveActiveGroup"
+                                    @otp-copied-to-clipboard="notify.success({ text: t('notification.copied_to_clipboard') })"
+                                    @validation-error="mapDisplayerErrors"
+                                    @error="(error) => errorHandler.show(error)"
+                                />
+                            </div>
+                            <div v-if="form.errors.any()" role="alert" class="m-3">
+                                <ul v-for="(field, index) in form.errors.errors" :key="index" class="help is-danger">
+                                    <li v-for="(error, index) in field" :key="index">{{ error }}</li>
+                                </ul>
+                            </div>
+                            <div class="field is-grouped is-grouped-centered">
+                                <div class="control">
+                                    <VueButton nativeType="submit" :isLoading="form.isBusy" >{{ $t('label.save') }}</VueButton>
+                                </div>
+                                <NavigationButton action="cancel" :isText="true" :isRounded="false" :useLinkTag="false" @canceled="cancelCreation" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Full form -->
+            <FormWrapper v-if="showAdvancedForm" :title="isEditMode ? 'heading.edit_account' : 'heading.new_account'">
+                <form @submit.prevent="handleSubmit" @keydown="form.onKeydown($event)">
+                    <!-- qcode fileupload -->
+                    <div v-if="!isEditMode" class="field is-grouped">
+                        <div class="control">
+                            <div role="button" tabindex="0" class="file is-small" :class="{ 'is-black': mode == 'dark' }" @keyup.enter="qrcodeInputLabel.click()">
+                                <label class="file-label" :title="$t('tooltip.use_qrcode')" ref="qrcodeInputLabel">
+                                    <input inert tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="uploadQrcode" ref="qrcodeInput">
+                                    <span class="file-cta">
+                                        <span class="file-label">
+                                            <LucideQrCode class="mr-2" />{{ $t('label.prefill_using_qrcode') }}
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <FormFieldError v-if="qrcodeForm.errors.hasAny('qrcode')" :error="qrcodeForm.errors.get('qrcode')" :field="'qrcode'" class="help-for-file" />
+                    <!-- service -->
+                    <FormField v-model="form.service" fieldName="service" :errorMessage="form.errors.get('email')" :isDisabled="form.otp_type === 'steamtotp'" label="field.service" :placeholder="$t('field.service.placeholder')" autofocus />
+                    <!-- account -->
+                    <FormField v-model="form.account" fieldName="account" :errorMessage="form.errors.get('account')" label="field.account" :placeholder="$t('field.account.placeholder')" />
+                    <!-- icon upload -->
+                    <label v-if="user.preferences.iconSource == 'logolib'" for="icon-collection" class="label">{{ $t('field.icon') }}</label>
+                    <!-- try my luck -->
+                    <div v-if="user.preferences.iconSource == 'logolib'" class="field has-addons">
+                        <div class="control">
+                            <div class="select">
+                                <select :disabled="!form.service" name="icon-collection" v-model="iconCollection">
+                                    <option v-for="collection in iconCollections" :key="collection.text" :value="collection.value">
+                                        {{ collection.text }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div v-if="iconCollectionVariants[iconCollection]" class="control">
+                            <div class="select">
+                                <select :disabled="!form.service" name="icon-collection-variant" v-model="iconCollectionVariant">
+                                    <option v-for="variant in iconCollectionVariants[iconCollection]" :key="variant.value" :value="variant.value">
+                                        {{ $t(variant.text) }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- icon pack -->
+                    <FormSelect v-else-if="user.preferences.iconSource == 'iconpack'" v-model="iconPack" :options="iconPacks" fieldName="iconPack" :isDisabled="!form.service" label="field.icon">
+                        <button class="button is-ghost" @click="refreshIconPackList" type="button" :title="$t('tooltip.refresh_icon_pack_list')">
+                            <LucideRefreshCw :class="{ 'spinning': isLoading }"/>
+                        </button>
+                    </FormSelect>
+                    <!-- icon field buttons -->
+                    <div class="field is-grouped">
+                        <!-- try my luck button -->
+                        <div class="control">
+                            <VueButton @click="fetchLogo" :color="mode == 'dark' ? 'is-dark' : ''" nativeType="button" :is-loading="fetchingLogo" :disabled="!form.service || !hasSomeIconPack" aria-describedby="lgdTryMyLuck">
+                                <span class="icon is-small">
+                                    <LucideWandSparkles />
+                                </span>
+                                <span>{{ $t('label.i_m_lucky') }}</span>
+                            </VueButton>
+                        </div>
+                        <!-- upload icon button -->
+                        <div class="control is-flex">
+                            <div role="button" tabindex="0" class="file mr-3" :class="mode == 'dark' ? 'is-dark' : 'is-white'" @keyup.enter="iconInputLabel.click()">
+                                <label for="filUploadIcon" class="file-label" ref="iconInputLabel">
+                                    <input id="filUploadIcon" tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="uploadIcon" ref="iconInput">
+                                    <span class="file-cta">
+                                        <span class="file-label">
+                                            <LucideHardDriveUpload class="mr-2" />{{ $t('label.choose_image') }}
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                            <span class="tag is-large" :class="mode =='dark' ? 'is-dark' : 'is-white'" v-if="tempIcon">
+                                <img class="icon-preview" :src="$2fauth.config.subdirectory + '/storage/icons/' + tempIcon" :alt="$t('alttext.icon_to_illustrate_the_account')">
+                                <button type="button" class="clear-selection delete is-small" @click.prevent="deleteTempIcon" :aria-label="$t('label.remove_icon')"></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <FormFieldError v-if="iconForm.errors.hasAny('icon')" :error="iconForm.errors.get('icon')" :field="'icon'" class="help-for-file" />
+                        <p id="lgdTryMyLuck" v-if="user.preferences.getOfficialIcons" class="help">{{ $t('message.i_m_lucky_legend') }}</p>
+                    </div>
+                    <!-- group -->
+                    <FormSelect v-if="groups.length > 0" v-model="form.group_id" :options="groups" fieldName="group_id" label="field.group" help="field.group.help" />
+                    <!-- otp type -->
+                    <FormToggle v-model="form.otp_type" :isDisabled="isEditMode" :choices="otp_types" fieldName="otp_type" :errorMessage="form.errors.get('otp_type')" label="field.otp_type" help="field.otp_type.help" :hasOffset="true" />
+                    <div v-if="form.otp_type != ''">
+                        <!-- secret -->
+                        <FormProtectedField :enableProtection="isEditMode" v-model.trimAll="form.secret" fieldName="secret" :errorMessage="form.errors.get('secret')" label="field.secret" help="field.secret.help" />
+                        <!-- Options -->
+                        <div v-if="form.otp_type !== 'steamtotp'">
+                            <h2 class="title is-4 mt-5 mb-2">{{ $t('heading.options') }}</h2>
+                            <p class="help mb-4">
+                                {{ $t('field.options.help') }}
+                            </p>
+                            <!-- digits -->
+                            <FormToggle v-model="form.digits" :choices="digitsChoices" fieldName="digits" :errorMessage="form.errors.get('digits')" label="field.digits" help="field.digits.help" />
+                            <!-- algorithm -->
+                            <FormToggle v-model="form.algorithm" :choices="algorithms" fieldName="algorithm" :errorMessage="form.errors.get('algorithm')" label="field.algorithm" help="field.algorithm.help" />
+                            <!-- TOTP period -->
+                            <FormField v-if="form.otp_type === 'totp'" pattern="[0-9]{1,4}" :class="'is-half-width-field'" v-model="form.period" fieldName="period" :errorMessage="form.errors.get('period')" label="field.period" help="field.period.help" :placeholder="$t('field.period.placeholder')" />
+                            <!-- HOTP counter -->
+                            <FormProtectedField v-if="form.otp_type === 'hotp'" pattern="[0-9]{1,4}" :enableProtection="isEditMode" :isExpanded="false" v-model="form.counter" fieldName="counter" :errorMessage="form.errors.get('counter')" label="field.counter" :placeholder="$t('field.counter.placeholder')" :help="isEditMode ? 'field.counter.help_lock' : 'field.counter.help'" />
+                        </div>
+                    </div>
+                </form>
+                <!-- otp display modal (for previewing) -->
+                <Modal v-model="ShowTwofaccountInModal">
+                    <OtpDisplay
+                        ref="OtpDisplayForAdvancedForm"
+                        :accountParams="form.data()"
+                        :preferences="user.preferences"
+                        :twofaccountService="twofaccountService"
+                        :iconPathPrefix="$2fauth.config.subdirectory"
+                        :can_autoCloseTimeout="false"
+                        @increment-hotp="incrementHotp"
+                        @please-close-me="ShowTwofaccountInModal = false"
+                        @otp-copied-to-clipboard="notify.success({ text: t('notification.copied_to_clipboard') })"
+                        @validation-error="mapDisplayerErrors"
+                        @error="(error) => errorHandler.show(error)"
+                    />
+                </Modal>
+            </FormWrapper>
+            <div v-if="showSpinner">
+                <Spinner :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
+            </div>
+            <!-- alternatives -->
+            <Modal v-model="showAlternatives">
+                <QrContentDisplay :qrContent="uri" />
+            </Modal>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <p class="control">
+                        <VueButton nativeType="submit" :id="isEditMode ? 'btnUpdate' : 'btnCreate'" :isLoading="form.isBusy" class="is-rounded" >{{ isEditMode ? $t('label.save') : $t('label.create') }}</VueButton>
+                    </p>
+                    <p class="control" v-if="form.otp_type && form.secret">
+                        <button id="btnPreview" type="button" class="button is-success is-rounded has-text-white" @click="previewOTP">{{ $t('label.test') }}</button>
+                    </p>
+                    <NavigationButton action="cancel" :useLinkTag="false" @canceled="cancelCreation" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
     </UseColorMode>
 </template>

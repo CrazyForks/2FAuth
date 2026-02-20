@@ -28,16 +28,20 @@
 </script>
 
 <template>
-    <FormWrapper title="heading.rename_device">
-        <form @submit.prevent="updateCredential" @keydown="form.onKeydown($event)">
-            <FormField v-model="form.name" fieldName="name" :errorMessage="form.errors.get('name')" inputType="text" label="field.new_name" autofocus />
-            <FormButtons
-                :submitId="'btnEditCredential'"
-                :isBusy="form.isBusy"
-                submitLabel="label.save"
-                :showCancelButton="true"
-                @cancel="router.push({ name: 'settings.webauthn.devices' })"
-            />
-        </form>
-    </FormWrapper>
+    <StackLayout>
+        <template #content>
+            <FormWrapper title="heading.rename_device">
+                <form @submit.prevent="updateCredential" @keydown="form.onKeydown($event)">
+                    <FormField v-model="form.name" fieldName="name" :errorMessage="form.errors.get('name')" inputType="text" label="field.new_name" autofocus />
+                    <FormButtons
+                        :submitId="'btnEditCredential'"
+                        :isBusy="form.isBusy"
+                        submitLabel="label.save"
+                        :showCancelButton="true"
+                        @cancel="router.push({ name: 'settings.webauthn.devices' })"
+                    />
+                </form>
+            </FormWrapper>
+        </template>
+    </StackLayout>
 </template>

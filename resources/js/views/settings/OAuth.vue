@@ -148,9 +148,32 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'settings.oauth.tokens'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout v-if="createPATModalIsVisible">
+        <template #content>
+            <FormWrapper title="heading.new_token">
+                <form @submit.prevent="generatePAToken" @keydown="form.onKeydown($event)">
+                    <FormField v-model="form.name" fieldName="name" :errorMessage="form.errors.get('name')" inputType="text" label="field.name" autofocus />
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <VueButton nativeType="submit" :id="'btnGenerateToken'" :isLoading="form.isBusy" >
+                                {{ $t('label.generate') }}
+                            </VueButton>
+                        </div>
+                        <div class="control">
+                            <VueButton @click="cancelPATcreation" nativeType="button" id="btnCancel" :color="'is-text'">
+                                {{ $t('label.cancel') }}
+                            </VueButton>
+                        </div>
+                    </div>
+                </form>
+            </FormWrapper>
+        </template>
+    </StackLayout>
+    <StackLayout v-else>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'settings.oauth.tokens'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
                 <div v-if="isDisabled && user.oauth_provider" class="notification is-warning has-text-centered">
                     {{ $t('message.sso_only_x_settings_are_disabled', { auth_method: 'OAuth' }) }}
@@ -158,7 +181,7 @@
                 <div v-if="isDisabled && user.authenticated_by_proxy" class="notification is-warning has-text-centered">
                     {{ $t('message.auth_handled_by_proxy') + ' ' + $t('message.manage_auth_at_proxy_level') }}
                 </div>
-                <h4 class="title is-4 has-text-grey-light">{{ $t('heading.personal_access_tokens') }}</h4>
+                <h4 class="title is-4">{{ $t('heading.personal_access_tokens') }}</h4>
                 <div class="is-size-7-mobile">
                     {{ $t('message.token_legend')}}
                 </div>
@@ -195,34 +218,14 @@
                     </div>
                 </div>
                 <Spinner :isVisible="isFetching && tokens.length === 0" type="list-loading" />
-                <!-- footer -->
-                <VueFooter>
-                    <template #default>
-                        <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.oauth.tokens')" />
-                    </template>
-                </VueFooter>
             </FormWrapper>
-        </div>
-        <div v-if="createPATModalIsVisible" class="is-overlay modal-otp modal-background">
-            <main class="main-section">
-                <FormWrapper title="heading.new_token">
-                    <form @submit.prevent="generatePAToken" @keydown="form.onKeydown($event)">
-                        <FormField v-model="form.name" fieldName="name" :errorMessage="form.errors.get('name')" inputType="text" label="field.name" autofocus />
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <VueButton nativeType="submit" :id="'btnGenerateToken'" :isLoading="form.isBusy" >
-                                    {{ $t('label.generate') }}
-                                </VueButton>
-                            </div>
-                            <div class="control">
-                                <VueButton @click="cancelPATcreation" nativeType="button" id="btnCancel" :color="'is-text'">
-                                    {{ $t('label.cancel') }}
-                                </VueButton>
-                            </div>
-                        </div>
-                    </form>
-                </FormWrapper>
-            </main>
-        </div>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.oauth.tokens')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

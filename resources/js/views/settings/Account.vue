@@ -104,9 +104,11 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'settings.account'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'settings.account'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
                 <div v-if="user.isAdmin" class="notification is-warning">
                     {{ $t('message.you_are_administrator') }}
@@ -118,7 +120,7 @@
                     <div v-if="$2fauth.config.proxyAuth" class="notification is-warning has-text-centered">
                         {{ $t('message.user_account_controlled_by_proxy') + ' ' + $t('message.manage_account_at_proxy_level') }}
                     </div>
-                    <h4 class="title is-4 has-text-grey-light">{{ $t('heading.profile') }}</h4>
+                    <h4 class="title is-4">{{ $t('heading.profile') }}</h4>
                     <fieldset :disabled="$2fauth.config.proxyAuth || user.oauth_provider">
                         <FormField v-model="formProfile.name" fieldName="name" :errorMessage="formProfile.errors.get('name')" label="field.name" :maxLength="255" autocomplete="username" autofocus />
                         <FormField v-model="formProfile.email" fieldName="email" :errorMessage="formProfile.errors.get('email')" inputType="email" label="field.email" autocomplete="email" :maxLength="255" autofocus />
@@ -129,7 +131,7 @@
                 <form @submit.prevent="submitPassword" @keydown="formPassword.onKeydown($event)">
                     <input hidden type="text" name="name" :value="formProfile.name" autocomplete="username" />
                     <input hidden type="text" name="email" :value="formProfile.email" autocomplete="email" />
-                    <h4 class="title is-4 pt-6 has-text-grey-light">{{ $t('heading.change_password') }}</h4>
+                    <h4 class="title is-4 pt-6">{{ $t('heading.change_password') }}</h4>
                     <fieldset :disabled="$2fauth.config.proxyAuth || user.oauth_provider">
                         <FormPasswordField v-model="formPassword.password" fieldName="password" :errorMessage="formPassword.errors.get('password')" idSuffix="ForUpdate" autocomplete="new-password" :showRules="true" label="field.new_password" />
                         <FormPasswordField v-model="formPassword.password_confirmation" :showRules="false" fieldName="password_confirmation" :errorMessage="formPassword.errors.get('password_confirmation')" inputType="password" autocomplete="new-password" label="field.confirm_new_password" />
@@ -152,11 +154,13 @@
                     </fieldset>
                 </form>
             </FormWrapper>
-        </div>
-        <VueFooter>
-            <template #default>
-                <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.account')" />
-            </template>
-        </VueFooter>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.settings.account')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>
