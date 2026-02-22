@@ -17,15 +17,17 @@
         qrcode: null,
         inputFormat: 'fileUpload',
     }))
-    
+
 
     /**
      * Upload the submitted QR code file to the backend for decoding, then route the user
      * to the Create or Import form with decoded URI to prefill the form
+     *
+     * @param {File | undefined} file
      */
-    function submitQrCode() {
+    function submitQrCode(file) {
         form.clear()
-        form.qrcode = qrcodeInput.value.files[0]
+        form.qrcode = file ?? qrcodeInput.value.files[0]
 
         form.upload('/api/v1/qrcode/decode', { returnError: true }).then(response => {
             if (response.data.data.slice(0, 33).toLowerCase() === "otpauth-migration://offline?data=") {
@@ -51,11 +53,33 @@
         router.push({ name: 'capture' });
     }
 
+    /**
+     * Checks if the pasted thig is an image, and if yes, submits it to {@link submitQrCode}
+     * @param {ClipboardEvent} ev
+     */
+    function handlePaste(ev) {
+        for (let i = 0; i < ev.clipboardData.files.length; i++) {
+            const file = ev.clipboardData.files[i];
+            if (file.type.indexOf('image/') !== 0) {
+                // file is not an image
+                break;
+            }
+
+            submitQrCode(file);
+        }
+    }
+
     onMounted(() => {
         if( user.preferences.useDirectCapture && user.preferences.defaultCaptureMode === 'upload' ) {
             qrcodeInputLabel.value.click()
         }
+        console.log('mounting', handlePaste);
+        document.addEventListener('paste', handlePaste);
     })
+
+    onUnmounted(() => {
+        document.removeEventListener('paste', handlePaste);
+    });
 </script>
 
 <template>
