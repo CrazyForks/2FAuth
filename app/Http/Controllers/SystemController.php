@@ -7,6 +7,7 @@ use App\Notifications\TestEmailSettingNotification;
 use App\Services\ReleaseRadarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -70,7 +71,7 @@ class SystemController extends Controller
     public function testEmail(Request $request)
     {
         try {
-            $request->user()->notify(new TestEmailSettingNotification);
+            $request->user()->notify((new TestEmailSettingNotification)->locale($request->user()->preferredLocale() == 'browser' ? App::currentLocale() : $request->user()->preferredLocale()));
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
 

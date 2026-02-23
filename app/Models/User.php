@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Models\Traits\HasAuthenticationLog;
 use App\Models\Traits\WebAuthnManageCredentials;
+use App\Notifications\ResetPassword;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laragear\WebAuthn\WebAuthnAuthentication;
@@ -200,7 +201,7 @@ class User extends Authenticatable implements HasLocalePreference, WebAuthnAuthe
      */
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new ResetPassword($token));
+        $this->notify((new ResetPassword($token))->locale($this->preferredLocale() == 'browser' ? App::currentLocale() : $this->preferredLocale()));
     }
 
     /**
