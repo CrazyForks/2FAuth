@@ -4,7 +4,9 @@
     import { useBusStore } from '@/stores/bus'
     import { useNotify } from '@2fauth/ui'
     import { useTwofaccounts } from '@/stores/twofaccounts'
+    import { useI18n } from 'vue-i18n'
 
+    const { t } = useI18n()
     const router = useRouter()
     const user = useUserStore()
     const bus = useBusStore()
@@ -66,7 +68,10 @@
             }
 
             submitQrCode(file);
+            return
         }
+
+        notify.warn({ text: t('message.no_image_found_in_clipboard') })
     }
 
     onMounted(() => {
@@ -127,6 +132,10 @@
                     <RouterLink id="btnImport" class="button is-link is-outlined is-rounded" :to="{ name: 'importAccounts' }" >
                         {{ $t('label.import') }}
                     </RouterLink>
+                </div>
+                <!-- paste message -->
+                <div class="block">
+                    {{ $t('message.you_can_also_paste') }}<br>
                 </div>
             </div>
         </template>
