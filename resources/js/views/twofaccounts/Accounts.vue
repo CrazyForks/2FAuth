@@ -395,11 +395,11 @@
                     </div>
                     <div v-else>
                         <button type="button" id="btnShowGroupSwitch" :title="$t('tooltip.show_group_selector')" tabindex="1" class="button is-text is-like-text has-text-grey-dark" :class="{'has-text-grey' : mode != 'dark'}" @click.stop="showGroupSwitch = !showGroupSwitch">
-                            <template v-if="groups.current">
-                                {{ groups.current }} ({{ twofaccounts.filteredCount }})&nbsp;
-                            </template>
-                            <template v-else-if="twofaccounts.groupLessOnly">
+                            <template v-if="twofaccounts.groupLessOnly">
                                 {{ $t('label.group_less') }} ({{ twofaccounts.filteredCount }})&nbsp;
+                            </template>
+                            <template v-else-if="groups.current">
+                                {{ groups.current }} ({{ twofaccounts.filteredCount }})&nbsp;
                             </template>
                             <template v-else>
                                 {{ $t('label.all') }} ({{ twofaccounts.filteredCount }})&nbsp;
