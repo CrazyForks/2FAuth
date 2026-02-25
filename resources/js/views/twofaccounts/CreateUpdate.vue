@@ -570,8 +570,8 @@
             <!-- Quick form (right after a qr code upload) -->
             <div v-if="!isEditMode && showQuickForm" class="modal modal-otp is-active">
                 <div class="modal-background"></div>
-                <div class="modal-content">
-                    <div class="modal-slot has-text-centered is-shadowless">
+                <div class="modal-card is-flex-grow-1">
+                    <section class="modal-card-body modal-slot py-0 is-align-content-center has-text-centered">
                         <form @submit.prevent="createAccount" @keydown="form.onKeydown($event)">
                             <div>
                                 <FormFieldError v-if="iconForm.errors.hasAny('icon')" :error="iconForm.errors.get('icon')" :field="'icon'" class="help-for-file" />
@@ -600,14 +600,14 @@
                                     <li v-for="(error, index) in field" :key="index">{{ error }}</li>
                                 </ul>
                             </div>
-                            <div class="field is-grouped is-grouped-centered">
+                            <div class="field is-grouped is-grouped-centered mt-6">
                                 <div class="control">
                                     <VueButton nativeType="submit" :isLoading="form.isBusy" >{{ $t('label.save') }}</VueButton>
                                 </div>
                                 <NavigationButton action="cancel" :isText="true" :isRounded="false" :useLinkTag="false" @canceled="cancelCreation" />
                             </div>
                         </form>
-                    </div>
+                    </section>
                 </div>
             </div>
             <!-- Full form -->
@@ -736,9 +736,6 @@
                     />
                 </Modal>
             </FormWrapper>
-            <div v-if="showSpinner">
-                <Spinner :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
-            </div>
             <!-- alternatives -->
             <Modal v-model="showAlternatives">
                 <QrContentDisplay :qrContent="uri" />
@@ -758,5 +755,6 @@
             </VueFooter>
         </template>
     </StackLayout>
+    <Spinner v-if="showSpinner" :type="'fullscreen'" :isVisible="true" message="message.parsing_data" />
     </UseColorMode>
 </template>
