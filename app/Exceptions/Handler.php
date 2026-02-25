@@ -25,8 +25,10 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, $request) {
+            $message = $exception->getMessage() === 'unknowkn endpoint' ? 'unknowkn endpoint' : 'not found';
+        
             return response()->json([
-                'message' => 'not found',
+                'message' => $message,
             ], 404);
         });
 
