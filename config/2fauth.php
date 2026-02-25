@@ -140,6 +140,7 @@ return [
     'features' => [
         'iconPack',
         'sharing',
+        'showNextOtp',
     ],
 
     /*
