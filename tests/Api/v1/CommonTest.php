@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Api\v1\Controllers;
+namespace Tests\Api\v1;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tests\FeatureTestCase;
