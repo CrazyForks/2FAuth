@@ -147,12 +147,4 @@
             </VueFooter>
         </template>
     </StackLayout>
-    <!-- static landing UI -->
-    <!-- <div class="container has-text-centered">
-        <VueFooter >
-            <template #default>
-                <NavigationButton v-if="!twofaccounts.isEmpty" action="back" @goback="router.push({ name: 'accounts' })" :previous-page-title="$t('title.accounts')" />
-            </template>
-        </VueFooter>
-    </div> -->
 </template>

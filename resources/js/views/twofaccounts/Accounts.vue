@@ -427,7 +427,7 @@
                     @accounts-moved="postGroupAssignementUpdate">
                 </DestinationGroupSelector>
                 <!-- show accounts list -->
-                <div class="container" v-if="showAccounts" :class="bus.inManagementMode ? 'is-edit-mode' : ''">
+                <div class="accounts-container" v-if="showAccounts" :class="bus.inManagementMode ? 'is-edit-mode' : ''">
                     <!-- accounts -->
                     <div class="accounts">
                         <span id="dv" class="columns is-multiline m-0" :class="{ 'is-centered': user.preferences.displayMode === 'grid' }">
