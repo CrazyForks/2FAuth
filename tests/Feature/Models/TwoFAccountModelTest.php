@@ -150,7 +150,7 @@ class TwoFAccountModelTest extends FeatureTestCase
         $this->assertEquals('totp', $twofaccount->otp_type);
         $this->assertEquals(OtpTestData::TOTP_MICROSOFT_CORPORATE_URI_MISMATCHING_ISSUER, $twofaccount->legacy_uri);
         $this->assertEquals(OtpTestData::MICROSOFT, $twofaccount->service);
-        $this->assertEquals(OtpTestData::ORGANIZATION . '_' . OtpTestData::ACCOUNT, $twofaccount->account);
+        $this->assertEquals(OtpTestData::ACCOUNT, $twofaccount->account);
         $this->assertEquals(OtpTestData::SECRET, $twofaccount->secret);
         $this->assertEquals(OtpTestData::DIGITS_DEFAULT, $twofaccount->digits);
         $this->assertEquals(OtpTestData::PERIOD_DEFAULT, $twofaccount->period);
@@ -233,9 +233,8 @@ class TwoFAccountModelTest extends FeatureTestCase
     }
 
     #[Test]
-    public function test_fill_with_invalid_uri_with_mismatching_issuer_returns_validation_exception()
+    public function test_fill_with_invalid_uri_with_mismatching_issuer_does_not_return_validation_exception()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
         $twofaccount = new TwoFAccount;
         $twofaccount->fillWithURI(OtpTestData::INVALID_OTPAUTH_URI_MISMATCHING_ISSUER);
     }

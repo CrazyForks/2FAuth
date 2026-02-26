@@ -29,45 +29,49 @@
 </script>
 
 <template>
-<!-- Group selector -->
-    <div class="container group-selector">
-        <div class="columns is-centered is-multiline">
-            <div class="column is-full has-text-centered">
-                {{ $t('message.move_selected_to') }}
-            </div>
-            <div class="column is-one-third-tablet is-one-quarter-desktop is-one-quarter-widescreen is-one-quarter-fullhd">
-                <div class="columns is-multiline">
-                    <UseColorMode v-slot="{ mode }">
-                        <div class="column is-full" v-for="group in groups" :key="group.id">
-                            <button v-if="group.id > 0" type="button" class="button is-fullwidth" :class="{'is-link' : destinationGroupId === group.id, 'is-dark has-text-light is-outlined': mode == 'dark'}" @click="destinationGroupId = group.id">
-                                {{ group.name }}
-                            </button>
-                        </div>
-                        <div class="column has-text-centered">
-                            {{ $t('message.or') }}
-                        </div>
-                        <div class="column is-full">
-                            <button type="button" class="button is-fullwidth" :class="{'is-link' : destinationGroupId === 0, 'is-dark has-text-light is-outlined': mode == 'dark'}" @click="destinationGroupId = 0">
-                                {{ $t('label.remove_from_group') }}
-                            </button>
-                        </div>
-                    </UseColorMode>
+    <!-- Group selector -->
+    <StackLayout>
+        <template #content>
+            <div class="columns is-centered is-multiline m-0 mt-6">
+                <div class="column is-full has-text-centered">
+                    {{ $t('message.move_selected_to') }}
                 </div>
-                <div class="columns is-centered">
-                    <div class="column has-text-centered">
-                        <RouterLink :to="{ name: 'groups' }" >{{ $t('link.manage_groups') }}</RouterLink>
+                <div class="column is-one-third-tablet is-one-quarter-desktop is-one-quarter-widescreen is-one-quarter-fullhd">
+                    <div class="columns is-multiline">
+                        <UseColorMode v-slot="{ mode }">
+                            <div class="column is-full" v-for="group in groups" :key="group.id">
+                                <button v-if="group.id > 0" type="button" class="button is-fullwidth" :class="{'is-link' : destinationGroupId === group.id, 'is-dark has-text-light is-outlined': mode == 'dark'}" @click="destinationGroupId = group.id">
+                                    {{ group.name }}
+                                </button>
+                            </div>
+                            <div class="column has-text-centered">
+                                {{ $t('message.or') }}
+                            </div>
+                            <div class="column is-full">
+                                <button type="button" class="button is-fullwidth" :class="{'is-link' : destinationGroupId === 0, 'is-dark has-text-light is-outlined': mode == 'dark'}" @click="destinationGroupId = 0">
+                                    {{ $t('label.remove_from_group') }}
+                                </button>
+                            </div>
+                        </UseColorMode>
+                    </div>
+                    <div class="columns is-centered">
+                        <div class="column has-text-centered">
+                            <RouterLink :to="{ name: 'groups' }" >{{ $t('link.manage_groups') }}</RouterLink>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <VueFooter>
-            <template #default>
-                <!-- Move to selected group button -->
-                <p class="control">
-                    <button type="button" class="button is-link is-rounded" @click="moveAccounts">{{ $t('label.apply') }}</button>
-                </p>
-                <NavigationButton action="cancel" :useLinkTag="false" @canceled="$emit('update:showDestinationGroupSelector', false)" />
-            </template>
-        </VueFooter>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <!-- Move to selected group button -->
+                    <p class="control">
+                        <button type="button" class="button is-link is-rounded" @click="moveAccounts">{{ $t('label.apply') }}</button>
+                    </p>
+                    <NavigationButton action="cancel" :useLinkTag="false" @canceled="$emit('update:showDestinationGroupSelector', false)" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

@@ -84,19 +84,21 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'admin.auth'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'admin.auth'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
                 <form>
-                    <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.single_sign_on') }}</h4>
+                    <h4 class="title is-4 pt-4">{{ $t('heading.single_sign_on') }}</h4>
                     <!-- enable SSO -->
                     <FormCheckbox v-model="appSettings.enableSso" @update:model-value="val => saveSetting('enableSso', val)" fieldName="enableSso" label="field.enable_sso" help="field.enable_sso.help" />
                         <!-- use SSO only -->
                         <FormCheckbox v-model="appSettings.useSsoOnly" @update:model-value="val => saveSetting('useSsoOnly', val)" fieldName="useSsoOnly" label="field.use_sso_only" help="field.use_sso_only.help" :isDisabled="!appSettings.enableSso" :isIndented="true" />
                         <!-- Allow Pat In SSO Only -->
                         <FormCheckbox v-model="appSettings.allowPatWhileSsoOnly" @update:model-value="val => saveSetting('allowPatWhileSsoOnly', val)" fieldName="allowPatWhileSsoOnly" label="field.allow_pat_in_sso_only" help="field.allow_pat_in_sso_only.help" :isDisabled="!appSettings.useSsoOnly" :isIndented="true" />
-                    <h4 class="title is-4 pt-4 has-text-grey-light">{{ $t('heading.registrations') }}</h4>
+                    <h4 class="title is-4 pt-4">{{ $t('heading.registrations') }}</h4>
                     <!-- restrict registration -->
                     <FormCheckbox v-model="appSettings.restrictRegistration" @update:model-value="val => saveSetting('restrictRegistration', val)" fieldName="restrictRegistration" :isDisabled="appSettings.disableRegistration" label="field.restrict_registration" help="field.restrict_registration.help" />
                         <!-- restrict list -->
@@ -109,11 +111,13 @@
                         <FormCheckbox v-model="appSettings.keepSsoRegistrationEnabled" @update:model-value="val => saveSetting('keepSsoRegistrationEnabled', val)" fieldName="keepSsoRegistrationEnabled" :isDisabled="!appSettings.enableSso || !appSettings.disableRegistration" label="field.keep_sso_registration_enabled" help="field.keep_sso_registration_enabled.help" :isIndented="true" />
                 </form>
             </FormWrapper>
-        </div>
-        <VueFooter>
-            <template #default>
-                <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.auth')" />
-            </template>
-        </VueFooter>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.auth')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

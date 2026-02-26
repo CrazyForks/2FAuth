@@ -66,15 +66,19 @@
 </script>
 
 <template>
-    <FormWrapper :title="isEditMode ? 'heading.rename_group' : 'heading.new_group'">
-        <form @submit.prevent="handleSubmit" @keydown="form.onKeydown($event)">
-            <FormField v-model="form.name" fieldName="name" :errorMessage="form.errors.get('name')" label="field.name" autofocus />
-            <FormButtons
-                :submitId="isEditMode ? 'btnEditGroup' : 'btnCreateGroup'"
-                :isBusy="form.isBusy"
-                :submitLabel="isEditMode ? 'label.save' : 'label.create'"
-                :showCancelButton="true"
-                @cancel="router.push({ name: 'groups' })" />
-        </form>
-    </FormWrapper>
+    <StackLayout>
+        <template #content>
+            <FormWrapper :title="isEditMode ? 'heading.rename_group' : 'heading.new_group'">
+                <form @submit.prevent="handleSubmit" @keydown="form.onKeydown($event)">
+                    <FormField v-model="form.name" fieldName="name" :errorMessage="form.errors.get('name')" label="field.name" autofocus />
+                    <FormButtons
+                        :submitId="isEditMode ? 'btnEditGroup' : 'btnCreateGroup'"
+                        :isBusy="form.isBusy"
+                        :submitLabel="isEditMode ? 'label.save' : 'label.create'"
+                        :showCancelButton="true"
+                        @cancel="router.push({ name: 'groups' })" />
+                </form>
+            </FormWrapper>
+        </template>
+    </StackLayout>
 </template>

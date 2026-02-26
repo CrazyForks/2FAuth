@@ -30,20 +30,25 @@
 </script>
 
 <template>
-    <ResponsiveWidthWrapper>
-        <h1 class="title has-text-grey-dark">
-            {{ $t('heading.access_log') }}
-        </h1>
-        <div class="block is-size-7-mobile">
-            {{ $t('message.access_log_legend_for_user', { username: username }) }} (#{{ props.userId }})
-        </div>
-        <AccessLogViewer :userId="props.userId" :lastOnly="false" :showSearch="true" :period="1" />
-        <!-- footer -->
-        <VueFooter>
-            <template #default>
-                <NavigationButton action="back" @goback="router.push({ name: 'admin.manageUser', params: { userId: props.userId }})" :previous-page-title="$t('title.admin.manageUser')" />
-                <NavigationButton action="close" @closed="router.push({ name: 'accounts' })" :current-page-title="$t('title.admin.logs.access')" />
-            </template>
-        </VueFooter>
-    </ResponsiveWidthWrapper>
+    <StackLayout>
+        <template #content>
+            <ResponsiveWidthWrapper>
+                <h1 class="title">
+                    {{ $t('heading.access_log') }}
+                </h1>
+                <div class="block is-size-7-mobile">
+                    {{ $t('message.access_log_legend_for_user', { username: username }) }} (#{{ props.userId }})
+                </div>
+                <AccessLogViewer :userId="props.userId" :lastOnly="false" :showSearch="true" :period="1" />
+            </ResponsiveWidthWrapper>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="back" @goback="router.push({ name: 'admin.manageUser', params: { userId: props.userId }})" :previous-page-title="$t('title.admin.manageUser')" />
+                    <NavigationButton action="close" @closed="router.push({ name: 'accounts' })" :current-page-title="$t('title.admin.logs.access')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

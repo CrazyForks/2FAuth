@@ -105,11 +105,13 @@
 </script>
 
 <template>
-    <div>
-        <TabBar :tabs="tabs" :active-tab="'admin.users'" @tab-selected="(to) => router.push({ name: to })" />
-        <div class="options-tabs">
+    <StackLayout>
+        <template #header>
+            <TabBar :tabs="tabs" :active-tab="'admin.users'" @tab-selected="(to) => router.push({ name: to })" />
+        </template>
+        <template #content>
             <FormWrapper>
-                <h4 class="title is-4 has-text-grey-light">{{ $t('heading.users') }}</h4>
+                <h4 class="title is-4">{{ $t('heading.users') }}</h4>
                 <div class="is-size-7-mobile">
                     {{ $t('message.admin_users_legend')}}
                 </div>
@@ -148,7 +150,7 @@
                                 <span class="is-block has-ellipsis is-family-primary is-size-6 is-size-7-mobile has-text-grey">{{ user.email }}</span>
                                 <!-- tag -->
                                 <div class="tags mt-2">
-                                    <span v-if="user.is_admin" class="tag is-rounded has-text-warning-dark" :class="mode == 'dark' ? 'has-background-black-bis' : 'has-background-grey-lighter'" >admin</span>
+                                    <span v-if="user.is_admin" class="tag is-rounded" :class="mode == 'dark' ? 'has-text-warning-40 has-background-black-bis' : 'has-text-warning-35 has-background-grey-lighter'" >admin</span>
                                     <span v-if="user.oauth_provider" class="tag is-rounded  has-text-grey" :class="mode == 'dark' ? 'has-background-black-bis' : 'has-background-grey-lighter'" >oauth: {{ user.oauth_provider }}</span>
                                 </div>
                             </div>
@@ -169,13 +171,14 @@
                 <div v-else class="mt-4 pl-3">
                     {{ $t('message.no_result') }}
                 </div>
-                <!-- footer -->
-                <VueFooter>
-                    <template #default>
-                        <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.users')" />
-                    </template>
-                </VueFooter>
             </FormWrapper>
-        </div>
-    </div>
+        </template>
+        <template #footer>
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="close" @closed="router.push({ name: returnTo })" :current-page-title="$t('title.admin.users')" />
+                </template>
+            </VueFooter>
+        </template>
+    </StackLayout>
 </template>

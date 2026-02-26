@@ -38,19 +38,25 @@
 </script>
 
 <template>
-    <FormWrapper :title="isWebauthnReset ? 'heading.account_recovery' : 'heading.reset_password'" :punchline="isWebauthnReset ? 'message.recovery_punchline' : 'message.reset_punchline'">
-        <div v-if="isWebauthnReset" class="block">
-            {{ $t('message.ensure_you_open_mail_in_trusted_device') }}
-        </div>
-        <form @submit.prevent="requestPasswordReset" @keydown="form.onKeydown($event)">
-            <FormField v-model="form.email" fieldName="email" :errorMessage="form.errors.get('email')" label="field.email" autofocus />
-            <FormButtons
-                :submitId="'btnSendResetPwd'"
-                :isBusy="form.isBusy"
-                :submitLabel="isWebauthnReset ? 'label.send_recovery_link' : 'label.send_password_reset_link'"
-                :showCancelButton="true"
-                @cancel="router.push({ name: 'login' })" />
-        </form>
-        <VueFooter />
-    </FormWrapper>
+    <StackLayout>
+        <template #content>
+            <FormWrapper :title="isWebauthnReset ? 'heading.account_recovery' : 'heading.reset_password'" :punchline="isWebauthnReset ? 'message.recovery_punchline' : 'message.reset_punchline'">
+                <div v-if="isWebauthnReset" class="block">
+                    {{ $t('message.ensure_you_open_mail_in_trusted_device') }}
+                </div>
+                <form @submit.prevent="requestPasswordReset" @keydown="form.onKeydown($event)">
+                    <FormField v-model="form.email" fieldName="email" :errorMessage="form.errors.get('email')" label="field.email" autofocus />
+                    <FormButtons
+                        :submitId="'btnSendResetPwd'"
+                        :isBusy="form.isBusy"
+                        :submitLabel="isWebauthnReset ? 'label.send_recovery_link' : 'label.send_password_reset_link'"
+                        :showCancelButton="true"
+                        @cancel="router.push({ name: 'login' })" />
+                </form>
+            </FormWrapper>
+        </template>
+        <template #footer>
+            <VueFooter />
+        </template>
+    </StackLayout>
 </template>

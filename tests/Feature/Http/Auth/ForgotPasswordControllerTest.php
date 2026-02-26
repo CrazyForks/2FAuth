@@ -6,7 +6,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Middleware\RejectIfAuthenticated;
 use App\Http\Middleware\RejectIfDemoMode;
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;

@@ -501,28 +501,9 @@ class TwoFAccount extends Model implements Sortable
         try {
             $this->generator = Factory::loadFromProvisioningUri($isSteamTotp ? str_replace('otpauth://steam', 'otpauth://totp', $uri) : $uri);
         } catch (\Throwable $ex) {
-
-            // Hack for Microsoft corporate 2FAs for whom the Issuer query parameter != the Issuer aside the account
-            $parsed_uri = \OTPHP\Url::fromString($uri);
-            $pathChunks = explode(':', rawurldecode(mb_substr($parsed_uri->getPath(), 1)));
-            $service    = $pathChunks[0];
-            $issuer     = data_get($parsed_uri->getQuery(), 'issuer', $service);
-
-            if (count($pathChunks) == 2 && strtolower($issuer) == 'microsoft' && strcasecmp($issuer, $service) != 0) {
-                $newUri = str_replace($pathChunks[0] . ':', '', rawurldecode($uri));
-                try {
-                    $this->generator = Factory::loadFromProvisioningUri($newUri);
-                    $this->generator->setLabel($service . '_' . $this->generator->getLabel());
-                } catch (\Throwable $ex) {
-                    throw ValidationException::withMessages([
-                        'uri' => __('validation.custom.uri.regex', ['attribute' => 'uri']),
-                    ]);
-                }
-            } else {
-                throw ValidationException::withMessages([
-                    'uri' => __('validation.custom.uri.regex', ['attribute' => 'uri']),
-                ]);
-            }
+            throw ValidationException::withMessages([
+                'uri' => __('validation.custom.uri.regex', ['attribute' => 'uri']),
+            ]);
         }
 
         // As loadFromProvisioningUri() accept URI without label (nor account nor service) we check

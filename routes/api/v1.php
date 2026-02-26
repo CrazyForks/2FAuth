@@ -1,5 +1,6 @@
 <?php
 
+use App\Api\v1\Controllers\FeatureFlagController;
 use App\Api\v1\Controllers\GroupController;
 use App\Api\v1\Controllers\IconController;
 use App\Api\v1\Controllers\QrCodeController;
@@ -56,6 +57,10 @@ Route::group(['middleware' => 'auth:api-guard'], function () {
     Route::post('icons/default', [IconController::class, 'fetch'])->name('icons.fetch');
     Route::post('icons', [IconController::class, 'upload'])->name('icons.upload');
     Route::delete('icons/{icon}', [IconController::class, 'delete'])->name('icons.delete');
+
+    // Feature flags
+    Route::get('features', [FeatureFlagController::class, 'index'])->name('features.index');
+    Route::get('features/{feature}', [FeatureFlagController::class, 'show'])->name('features.show');
 });
 
 /**
@@ -75,3 +80,7 @@ Route::group(['middleware' => ['auth:api-guard', 'admin']], function () {
     Route::put('settings/{settingName}', [SettingController::class, 'update'])->name('settings.update');
     Route::delete('settings/{settingName}', [SettingController::class, 'destroy'])->name('settings.destroy');
 });
+
+Route::get('/{any}', function() {
+    abort(404, 'unknowkn endpoint');
+})->where('any', '.*');

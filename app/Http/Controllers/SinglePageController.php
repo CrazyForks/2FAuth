@@ -49,6 +49,7 @@ class SinglePageController extends Controller
         $ssoDocUrl          = config('2fauth.ssoDocUrl');
         $exportSchemaUrl    = config('2fauth.exportSchemaUrl');
         $isSecure           = str_starts_with(config('app.url'), 'https');
+        $manifestUrl        = url('manifest.json', [], $isSecure);
 
         $viewData = [
             'appSettings' => $settings,
@@ -73,7 +74,7 @@ class SinglePageController extends Controller
             'isTestingApp'       => $isTestingApp,
             'lang'               => $lang,
             'locales'            => $locales,
-            'isSecure'           => $isSecure,
+            'manifestUrl'        => $manifestUrl,
         ];
 
         if (config('2fauth.config.contentSecurityPolicy')) {

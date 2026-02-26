@@ -139,8 +139,8 @@
 <template>
     <div class="modal is-active">
         <div class="modal-background"></div>
-        <div class="modal-content">
-            <section class="section">
+        <div class="modal-card is-flex-grow-1">
+            <section class="modal-card-body modal-slot py-0 is-align-content-center has-text-centered">
                 <div class="columns is-centered">
                     <div class="column is-three-quarters">
                         <div class="modal-slot has-text-centered is-shadowless">
@@ -165,7 +165,7 @@
                                             </div>
                                         </div>
                                         <p>
-                                            <a @click.stop="reloadLocation">{{ $t('label.refresh') }}</a>
+                                            <a class="is-link" @click.stop="reloadLocation">{{ $t('label.refresh') }}</a>
                                         </p>
                                     </div>
                                     <p v-else class="is-size-7">{{ $t('message.stream.' + errorPhrase + '.solution') }}</p>
@@ -177,38 +177,40 @@
                         </div>
                     </div>
                 </div>
+                <div v-show="!errorPhrase" class="fullscreen-streamer">
+                    <!-- device selector -->
+                    <div v-if="cameraIsOn && cameras.length > 1" class="field has-addons has-addons-centered">
+                        <p class="control has-icons-left">
+                            <span class="select">
+                                <select v-model="selectedCamera">
+                                    <option v-for="camera in cameras" :key="camera.label" :value="camera">
+                                        {{ camera.label ? camera.label : $t('label.default') }}
+                                    </option>
+                                </select>
+                            </span>
+                            <span class="icon is-small is-left">
+                                <LucideCamera />
+                            </span>
+                        </p>
+                    </div>
+                    <qrcode-stream
+                        v-if="selectedCamera !== null"
+                        :track="paintOutline"
+                        @detect="onDetect"
+                        @error="onError"
+                        @camera-on="cameraOn"
+                        @camera-off="cameraOff"
+                    ></qrcode-stream>
+                </div>
+                <Modal v-model="showQrContent">
+                    <QrContentDisplay :qrContent="form.uri" />
+                </Modal>
             </section>
-        </div>
-        <div v-show="!errorPhrase" class="fullscreen-streamer">
-            <qrcode-stream
-                v-if="selectedCamera !== null"
-                :track="paintOutline"
-                @detect="onDetect"
-                @error="onError"
-                @camera-on="cameraOn"
-                @camera-off="cameraOff"
-            ></qrcode-stream>
-            <!-- device selector -->
-            <div v-if="cameraIsOn && cameras.length > 1" class="field has-addons has-addons-centered mt-3">
-                <p class="control has-icons-left">
-                    <span class="select">
-                        <select v-model="selectedCamera">
-                            <option v-for="camera in cameras" :key="camera.label" :value="camera">
-                                {{ camera.label ? camera.label : $t('label.default') }}
-                            </option>
-                        </select>
-                    </span>
-                    <span class="icon is-small is-left">
-                        <LucideCamera />
-                    </span>
-                </p>
-            </div>
-        </div>
-        <div class="fullscreen-footer">
-            <NavigationButton action="cancel" :isCapture="true" :useLinkTag="false" @canceled="exitStream()" />
+            <VueFooter>
+                <template #default>
+                    <NavigationButton action="cancel" :isCapture="true" :useLinkTag="false" @canceled="exitStream()" />
+                </template>
+            </VueFooter>
         </div>
     </div>
-    <Modal v-model="showQrContent">
-        <QrContentDisplay :qrContent="form.uri" />
-    </Modal>
 </template>

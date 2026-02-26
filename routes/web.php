@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * Routes that only work for unauthenticated user (otherwise, the user is logged out)
  */
-Route::group(['middleware' => ['rejectIfDemoMode', 'RejectIfSsoOnlyAndNotForAdmin', 'forceLogout']], function () {
+Route::group(['middleware' => ['rejectIfDemoMode', 'RejectIfSsoOnlyAndNotForAdmin', 'forceLogout', 'setLanguage']], function () {
     Route::post('user', [RegisterController::class, 'register'])->name('user.register');
     Route::post('user/password/lost', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('user.password.lost');
     Route::post('user/password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset');

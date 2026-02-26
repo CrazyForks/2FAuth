@@ -81,6 +81,7 @@ class Kernel extends HttpKernel
         'cache.headers'                 => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'kickOutInactiveUser'           => \App\Http\Middleware\KickOutInactiveUser::class,
         'forceLogout'                   => \App\Http\Middleware\ForceLogout::class,
+        'setLanguage'                   => \App\Http\Middleware\SetLanguage::class,
         // 'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         // 'signed' => \App\Http\Middleware\ValidateSignature::class,
     ];
