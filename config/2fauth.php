@@ -115,6 +115,7 @@ return [
     'locales' => [
         'bg',
         'zh-CN',
+        'zh-TW',
         'da',
         'nl',
         'en',
