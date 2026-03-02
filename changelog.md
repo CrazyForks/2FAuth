@@ -1,10 +1,23 @@
 # Change log
 
-## [6.0.1] - 2026-01-dd
+## [6.1.0] - 2026-03-02
+
+### Added
+
+- [PR #526](https://github.com/Bubka/2FAuth/pull/526) Chinese Traditional translation, thanks to [@olivertzeng](https://github.com/olivertzeng)
+- [PR #527](https://github.com/Bubka/2FAuth/pull/527) Allow pasting on upload page to add QR codes easily, thanks to [@moritzuehlingo](https://github.com/moritzuehling)
+
+### Security fix
+
+- Mitigate blind SSRF by adding URL validation before imagelink resources are fetched (thx [@DenizParlak](https://github.com/DenizParlak))
 
 ### Fixed
 
+- [issue #509](https://github.com/Bubka/2FAuth/issues/509) manifest.json cannot be accessed through a reverse proxy
 - [issue #516](https://github.com/Bubka/2FAuth/issues/516) Local iconsPack is greyout - cant be selected for item
+- [issue #517](https://github.com/Bubka/2FAuth/issues/517) Typo: "recommanded" instead of "recommended"
+- [issue #522](https://github.com/Bubka/2FAuth/issues/522) Test email missed text
+- Bad groupSwitch button label on group change
 
 ## [6.0.0] - 2025-12-05
 
