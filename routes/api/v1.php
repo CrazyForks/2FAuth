@@ -81,6 +81,6 @@ Route::group(['middleware' => ['auth:api-guard', 'admin']], function () {
     Route::delete('settings/{settingName}', [SettingController::class, 'destroy'])->name('settings.destroy');
 });
 
-Route::get('/{any}', function() {
+Route::get('/{any}', function () {
     abort(404, 'unknowkn endpoint');
 })->where('any', '.*');
