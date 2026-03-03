@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e58439464eec7ab74f7920073e067d49",
+    "content-hash": "ca7bed98d8d7d88dfbf94235a072a6f5",
     "packages": [
         {
             "name": "brick/math",
@@ -1468,65 +1468,6 @@
             "time": "2025-08-22T14:27:06+00:00"
         },
         {
-            "name": "jackiedo/dotenv-editor",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Bubka/Laravel-Dotenv-Editor.git",
-                "reference": "ae25fda049887028f693ff0c32511ab13afcf45f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Bubka/Laravel-Dotenv-Editor/zipball/ae25fda049887028f693ff0c32511ab13afcf45f",
-                "reference": "ae25fda049887028f693ff0c32511ab13afcf45f",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^12.0|^11.0|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
-                "illuminate/contracts": "^12.0|^11.0|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
-                "illuminate/support": "^12.0|^11.0|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
-                "jackiedo/path-helper": "^1.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Jackiedo\\DotenvEditor\\DotenvEditorServiceProvider"
-                    ],
-                    "aliases": {
-                        "DotenvEditor": "Jackiedo\\DotenvEditor\\Facades\\DotenvEditor"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Jackiedo\\DotenvEditor\\": "src"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bubka"
-                }
-            ],
-            "description": "The .env file editor tool for Laravel 5.8+",
-            "keywords": [
-                "dotenv",
-                "dotenv-editor",
-                "laravel"
-            ],
-            "support": {
-                "source": "https://github.com/Bubka/Laravel-Dotenv-Editor/tree/master"
-            },
-            "time": "2025-11-18T20:18:21+00:00"
-        },
-        {
             "name": "jackiedo/path-helper",
             "version": "v1.0.0",
             "source": {
@@ -1770,6 +1711,70 @@
                 "source": "https://github.com/khanamiryan/php-qrcode-detector-decoder/tree/2.0.3"
             },
             "time": "2025-06-10T08:44:02+00:00"
+        },
+        {
+            "name": "koel/dotenv-editor",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/koel/Laravel-Dotenv-Editor.git",
+                "reference": "4eb2220dbae0e2f4cec10efd82c0b79721ee423a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/koel/Laravel-Dotenv-Editor/zipball/4eb2220dbae0e2f4cec10efd82c0b79721ee423a",
+                "reference": "4eb2220dbae0e2f4cec10efd82c0b79721ee423a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^12|^11|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
+                "illuminate/contracts": "^12|^11|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
+                "illuminate/support": "^12|^11|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
+                "jackiedo/path-helper": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "DotenvEditor": "Jackiedo\\DotenvEditor\\Facades\\DotenvEditor"
+                    },
+                    "providers": [
+                        "Jackiedo\\DotenvEditor\\DotenvEditorServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jackiedo\\DotenvEditor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jackie Do",
+                    "email": "anhvudo@gmail.com"
+                },
+                {
+                    "name": "Phan An",
+                    "email": "m@phanan.net"
+                }
+            ],
+            "description": "The .env file editor tool for Laravel 5.8+",
+            "keywords": [
+                "dotenv",
+                "dotenv-editor",
+                "laravel"
+            ],
+            "support": {
+                "source": "https://github.com/koel/Laravel-Dotenv-Editor/tree/v2.2.0"
+            },
+            "time": "2025-06-18T17:26:26+00:00"
         },
         {
             "name": "laragear/meta-model",
@@ -11064,9 +11069,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "jackiedo/dotenv-editor": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

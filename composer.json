@@ -7,12 +7,6 @@
         "two-factor authentication"
     ],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/Bubka/Laravel-Dotenv-Editor.git"
-        }
-    ],
     "require": {
         "php": "^8.4",
         "ext-bcmath": "*",
@@ -30,9 +24,9 @@
         "doctormckay/steam-totp": "^1.0",
         "enshrined/svg-sanitize": "^0.22.0",
         "google/protobuf": "^4.26",
-        "jackiedo/dotenv-editor": "dev-master",
         "jenssegers/agent": "^2.6.4",
         "khanamiryan/qrcode-detector-decoder": "^2.0.2",
+        "koel/dotenv-editor": "^2.2",
         "laragear/webauthn": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/passport": "^12.0",
