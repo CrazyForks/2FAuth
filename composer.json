@@ -29,9 +29,9 @@
         "koel/dotenv-editor": "^2.2",
         "laragear/webauthn": "^4.0",
         "laravel/framework": "^12.0",
-        "laravel/passport": "^12.0",
-        "laravel/socialite": "^5.10",
-        "laravel/tinker": "^2.9",
+        "laravel/passport": "^12.4.3",
+        "laravel/socialite": "^5.24.3",
+        "laravel/tinker": "^2.11.0",
         "laravel/ui": "^4.2",
         "paragonie/constant_time_encoding": "^3.0",
         "socialiteproviders/manager": "^4.8.1",
@@ -48,7 +48,7 @@
         "nunomaduro/collision": "^8.1",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpunit/phpunit": "^11.5.15"
+        "phpunit/phpunit": "^11.5.55"
     },
     "config": {
         "optimize-autoloader": true,
