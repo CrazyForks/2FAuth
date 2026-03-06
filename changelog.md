@@ -7,9 +7,14 @@
 - [PR #526](https://github.com/Bubka/2FAuth/pull/526) Chinese Traditional translation, thanks to [@olivertzeng](https://github.com/olivertzeng)
 - [PR #527](https://github.com/Bubka/2FAuth/pull/527) Allow pasting on upload page to add QR codes easily, thanks to [@moritzuehlingo](https://github.com/moritzuehling)
 
+#### New env vars
+
+- `BLOCK_OPTAUTH_IMAGELINK_FETCHING`: Enable or disable fetching of resources linked in the `imagelink` parameter of OTPauth URIs encoded in QR codes ([doc](https://docs.2fauth.app/getting-started/config/env-vars/#block_otpauth_imagelink_fetching)).
+
 ### Security fix
 
-- Mitigate blind SSRF by adding URL validation before imagelink resources are fetched (thx [@DenizParlak](https://github.com/DenizParlak))
+- Mitigate blind SSRF by adding URL validation before imagelink resources are fetched (thx [@DenizParlak](https://github.com/DenizParlak)). This comes with the new `BLOCK_OPTAUTH_IMAGELINK_FETCHING` env var, which is set to `true` by default.
+- Installation fails due to CVE-2025-45769 in transitive dependency firebase/php-jwt < 7.0.0 (via laravel/passport) (thx [@MickLesk](https://github.com/MickLesk))
 
 ### Fixed
 

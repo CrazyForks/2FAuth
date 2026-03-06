@@ -61,7 +61,7 @@ class IconService
      */
     public function buildFromRemoteImage(string $url) : ?string
     {
-        if (! $this->isPublicRemoteUrl($url)) {
+        if (config('2fauth.config.blockOtpauthImagelinkFetching') || ! $this->isPublicRemoteUrl($url)) {
             Log::notice(sprintf('ImageLink "%s": Requests to this address are not allowed, download aborted', $url));
 
             return null;

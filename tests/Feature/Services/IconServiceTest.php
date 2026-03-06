@@ -194,6 +194,21 @@ class IconServiceTest extends FeatureTestCase
     }
 
     #[Test]
+    public function test_build_from_remote_image_returns_null_when_fetching_is_disabled()
+    {
+        Http::preventStrayRequests();
+        config(['2fauth.config.blockOtpauthImagelinkFetching' => true]);
+
+        $imageUrl          = 'https://www.notfaked.url/icon.png';
+        $this->iconService = $this->app->make(IconService::class);
+        $iconName          = $this->iconService->buildFromRemoteImage($imageUrl);
+
+        $this->assertNull($iconName);
+        
+        config(['2fauth.config.blockOtpauthImagelinkFetching' => false]);
+    }
+
+    #[Test]
     public function test_build_from_remote_image_returns_null_when_remote_img_is_unreachable()
     {
         Http::fake([
