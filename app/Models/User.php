@@ -120,7 +120,7 @@ class User extends Authenticatable implements HasLocalePreference, WebAuthnAuthe
      *
      * These are extra user-defined events observers may subscribe to.
      *
-     * @var array
+     * @var string[]
      */
     protected $observables = ['demoting'];
 

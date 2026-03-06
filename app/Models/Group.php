@@ -78,7 +78,7 @@ class Group extends Model implements Sortable
     /**
      * The event map for the model.
      *
-     * @var array
+     * @var array<string, class-string>
      */
     protected $dispatchesEvents = [
         'deleted' => GroupDeleted::class,
