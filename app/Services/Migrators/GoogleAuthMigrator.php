@@ -38,6 +38,9 @@ class GoogleAuthMigrator extends Migrator
             throw new InvalidMigrationDataException('Google Authenticator');
         }
 
+        /**
+         * @var array<int|string, \App\Models\TwoFAccount> $twofaccounts
+         */
         $twofaccounts = [];
 
         foreach ($otpParameters->getIterator() as $key => $otp_parameters) {

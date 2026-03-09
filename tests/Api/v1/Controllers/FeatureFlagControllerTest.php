@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Api\v1\Controllers;
+
 use App\Api\v1\Controllers\FeatureFlagController;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\CoversClass;

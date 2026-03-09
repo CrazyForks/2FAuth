@@ -89,6 +89,9 @@ class BitwardenMigrator extends Migrator
             throw new InvalidMigrationDataException('Bitwarden');
         }
 
+        /**
+         * @var array<int|string, \App\Models\TwoFAccount> $twofaccounts
+         */
         $twofaccounts = [];
 
         foreach ($json['items'] as $key => $otp_parameters) {

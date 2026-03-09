@@ -46,6 +46,9 @@ class AegisMigrator extends Migrator
             throw new InvalidMigrationDataException('Aegis');
         }
 
+        /**
+         * @var array<int|string, \App\Models\TwoFAccount> $twofaccounts
+         */
         $twofaccounts = [];
 
         foreach ($json['db']['entries'] as $key => $otp_parameters) {

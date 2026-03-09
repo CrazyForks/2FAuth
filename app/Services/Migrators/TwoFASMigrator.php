@@ -78,6 +78,9 @@ class TwoFASMigrator extends Migrator
             throw new InvalidMigrationDataException('2FAS Auth');
         }
 
+        /**
+         * @var array<int|string, \App\Models\TwoFAccount> $twofaccounts
+         */
         $twofaccounts = [];
 
         foreach ($json['services'] as $key => $otp_parameters) {

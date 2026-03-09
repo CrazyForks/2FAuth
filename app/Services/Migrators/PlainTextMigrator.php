@@ -28,6 +28,11 @@ class PlainTextMigrator extends Migrator
             throw new InvalidMigrationDataException('migration');
         }
 
+        /**
+         * @var array<int|string, \App\Models\TwoFAccount> $twofaccounts
+         */
+        $twofaccounts = [];
+
         foreach ($otpauthURIs as $key => $uri) {
             try {
                 $twofaccounts[$key] = new TwoFAccount;

@@ -50,6 +50,9 @@ class TwoFAuthMigrator extends Migrator
             throw new InvalidMigrationDataException('2FAuth');
         }
 
+        /**
+         * @var array<int|string, \App\Models\TwoFAccount> $twofaccounts
+         */
         $twofaccounts = [];
 
         foreach ($json['data'] as $key => $otp_parameters) {
