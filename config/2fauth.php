@@ -104,6 +104,7 @@ return [
 
     'api' => [
         'throttle' => env('THROTTLE_API', 60),
+        'throttleImport' => env('THROTTLE_API_DURING_IMPORT', 1000),
     ],
 
     /*
