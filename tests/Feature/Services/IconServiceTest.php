@@ -47,6 +47,8 @@ class IconServiceTest extends FeatureTestCase
         Http::fake([
             OtpTestData::EXTERNAL_IMAGE_URL_DECODED => Http::response((new FileFactory)->image('file.png', 10, 10)->tempFile, 200),
         ]);
+
+        config(['2fauth.config.blockOtpauthImagelinkFetching' => false]);
     }
 
     #[Test]

@@ -52,6 +52,7 @@ class TwoFAccountModelTest extends FeatureTestCase
         Storage::fake('temp');
 
         Http::preventStrayRequests();
+        config(['2fauth.config.blockOtpauthImagelinkFetching' => false]);
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $this->user = User::factory()->create();
