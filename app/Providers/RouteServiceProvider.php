@@ -79,7 +79,7 @@ class RouteServiceProvider extends ServiceProvider
 
             if ($request->RouteIs('twofaccounts.store') && str_ends_with($request->header('referer'), 'account/import')) {
                 $importMaxAttempts = intval(config('2fauth.api.throttleImport'));
-                $maxAttempts = $importMaxAttempts ? $importMaxAttempts + $maxAttempts : 0;
+                $maxAttempts       = $importMaxAttempts ? $importMaxAttempts + $maxAttempts : 0;
             }
 
             return $maxAttempts > 0 ? Limit::perMinute($maxAttempts)->by($request->ip()) : Limit::none();
