@@ -10,30 +10,28 @@ file_env() {
   def="${2:-}"
 
   # Check if both var and fileVar are set
-  eval "val_var=\$$var"
-  eval "val_fileVar=\$$fileVar"
-  if [ -n "$val_var" ] && [ -n "$val_fileVar" ]; then
+  eval "val=\${$var-}"
+  eval "file=\${$fileVar-}"
+  if [ -n "$val" ] && [ -n "$file" ]; then
     echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
     exit 1
   fi
 
-  # Set default value
-  val="$def"
-
   # Use var if set
-  if [ -n "$val_var" ]; then
-    val="$val_var"
-  # Use fileVar if set
-  elif [ -n "$val_fileVar" ]; then
-    val="$(cat "$val_fileVar")" || {
-      echo >&2 "error: could not read file $val_fileVar"
+  if [ -n "$val" ]; then
+    :
+  elif [ -n "$file" ]; then
+    if [ ! -r "$file" ]; then
+      echo >&2 "error: cannot read file $file"
       exit 1
-    }
+    fi
+    val=$(cat "$file")
+  else
+    val="$def"
   fi
 
-  # Export and unset
-  eval "export $var=\"$val\""
-  eval "unset $fileVar"
+  export "$var=$val"
+  unset "$fileVar"
 }
 
 echo "Running version ${VERSION} commit ${COMMIT} built on ${CREATED}"
