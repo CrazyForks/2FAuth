@@ -1,6 +1,6 @@
 # Change log
 
-## [6.1.0] - 2026-03-02
+## [6.1.0] - 2026-03-09
 
 ### Added
 
@@ -9,7 +9,8 @@
 
 #### New env vars
 
-- `BLOCK_OPTAUTH_IMAGELINK_FETCHING`: Enable or disable fetching of resources linked in the `imagelink` parameter of OTPauth URIs encoded in QR codes ([doc](https://docs.2fauth.app/getting-started/config/env-vars/#block_otpauth_imagelink_fetching)).
+- `BLOCK_OPTAUTH_IMAGELINK_FETCHING`: Enable or disable fetching of resources linked in the `imagelink` parameter of OTPauth URIs encoded in QR codes ([doc](https://docs.2fauth.app/getting-started/config/env-vars/#block_optauth_imagelink_fetching)).
+- `THROTTLE_API_DURING_IMPORT`: Specific rate limite for API calls made by the Import feature to prevent `429` error during large import ([doc](https://docs.2fauth.app/getting-started/config/env-vars/#throttle_api_during_import), [#522](https://github.com/Bubka/2FAuth/issues/522)).
 
 ### Security fix
 
@@ -21,6 +22,7 @@
 - [issue #509](https://github.com/Bubka/2FAuth/issues/509) manifest.json cannot be accessed through a reverse proxy
 - [issue #516](https://github.com/Bubka/2FAuth/issues/516) Local iconsPack is greyout - cant be selected for item
 - [issue #517](https://github.com/Bubka/2FAuth/issues/517) Typo: "recommanded" instead of "recommended"
+- [issue #519](https://github.com/Bubka/2FAuth/issues/519) Docker Container keeps crashing on boot
 - [issue #522](https://github.com/Bubka/2FAuth/issues/522) Test email missed text
 - Bad groupSwitch button label on group change
 
