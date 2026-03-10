@@ -201,10 +201,8 @@
                 <h1 class="title mb-6">
                     {{ $t('heading.user_management') }}
                 </h1>
-                <!-- loader -->
-                <Spinner v-if="isFetching || ! managedUser" :isVisible="true" type="fullscreen-overlay" message="message.fetching_data" />
                 <!-- user info -->
-                <div v-else>
+                <div v-if="! isFetching && managedUser">
                     <div class="mb-6" :class="managedUser.info.is_admin ? 'is-left-bordered-warning' : 'is-left-bordered-link'">
                         <p class="title is-4" :class="{ 'has-text-grey-lighter' : mode == 'dark' }">
                         <span class="has-text-weight-light has-text-grey-dark is-pulled-right">#{{ managedUser.info.id }}</span>{{ managedUser.info.name }}</p>
@@ -320,6 +318,8 @@
                     </div>
                 </div>
             </ResponsiveWidthWrapper>
+            <!-- loader -->
+            <Spinner v-if="isFetching || ! managedUser" :isVisible="true" type="fullscreen-overlay" message="message.fetching_data" />
         </template>
         <template #footer>
             <VueFooter>

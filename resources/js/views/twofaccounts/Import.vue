@@ -417,10 +417,7 @@
                         </tbody>
                     </table>           
                 </div>
-                <div v-else-if="isFetching && exportedAccounts.length === 0">
-                    <Spinner :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
-                </div>
-                <div v-else>
+                <div v-else-if="!isFetching">
                     <div class="block is-size-7-mobile">
                         <p class="mb-2">{{ $t('message.submitted_data_parsed_now_accounts_are_awaiting_import') }}</p>
                         <p>{{ $t('message.use_buttons_to_save_or_discard') }}</p>
@@ -481,6 +478,7 @@
                     </div>
                 </div>
             </ResponsiveWidthWrapper>
+            <Spinner v-if="isFetching && exportedAccounts.length === 0" :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
             <!-- modal -->
             <Modal v-model="showTwofaccountInModal">
                 <OtpDisplay
