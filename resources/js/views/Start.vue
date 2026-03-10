@@ -19,6 +19,8 @@
         qrcode: null,
         inputFormat: 'fileUpload',
     }))
+    const isPasting = ref(false)
+    const isUploading = ref(false)
 
 
     /**
@@ -46,6 +48,10 @@
                 notify.alert({ text: error.response.data.message })
             }
         })
+        .finally(() => {
+            isPasting.value = false
+            isUploading.value = false
+        })
     }
 
     /**
@@ -67,11 +73,20 @@
                 break;
             }
 
+            isPasting.value = true
             submitQrCode(file);
             return
         }
 
         notify.warn({ text: t('message.no_image_found_in_clipboard') })
+    }
+
+    /**
+     * Triggers decoding of uploaded qr code
+     */
+    function handleUploadQR() {        
+        isUploading.value = true
+        submitQrCode()
     }
 
     onMounted(() => {
@@ -90,7 +105,8 @@
 <template>
     <StackLayout :is-vertical-centered="true">
         <template #content>
-            <div class="has-text-centered">
+            <Spinner v-if="isPasting" :type="'fullscreen-overlay'" :isVisible="true" message="message.parsing_data" />
+            <div v-else class="has-text-centered">
                 <!-- trailer phrase that invite to add an account -->
                 <div :class="{ 'is-hidden' : twofaccounts.count !== 0 }">
                     {{ $t('message.no_account_here') }}<br>
@@ -101,7 +117,7 @@
                     <div class="quick-uploader-background"></div>
                     <div class="quick-uploader-button is-align-content-center">
                         <!-- upload a qr code (with basic file field and backend decoding) -->
-                        <label role="button" tabindex="0" v-if="user.preferences.useBasicQrcodeReader" class="button is-link is-medium is-rounded is-main" ref="qrcodeInputLabel" @keyup.enter="qrcodeInputLabel.click()">
+                        <label role="button" tabindex="0" v-if="user.preferences.useBasicQrcodeReader" class="button is-link is-medium is-rounded is-main"  :class="{ 'is-loading' : isUploading }" ref="qrcodeInputLabel" @keyup.enter="qrcodeInputLabel.click()">
                             <input aria-hidden="true" tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="submitQrCode" ref="qrcodeInput">
                             {{ $t('label.upload_qrcode') }}
                         </label>
@@ -116,8 +132,8 @@
                 <div class="block light-or-darker">{{ $t('message.alternative_methods') }}</div>
                 <!-- upload a qr code -->
                 <div class="block has-text-link" v-if="!user.preferences.useBasicQrcodeReader">
-                    <label role="button" tabindex="0" class="button is-link is-outlined is-rounded" ref="qrcodeInputLabel" @keyup.enter="qrcodeInputLabel.click()">
-                        <input aria-hidden="true" tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="submitQrCode" ref="qrcodeInput">
+                    <label role="button" tabindex="0" class="button is-link is-outlined is-rounded" :class="{ 'is-loading' : isUploading }" ref="qrcodeInputLabel" @keyup.enter="qrcodeInputLabel.click()">
+                        <input aria-hidden="true" tabindex="-1" class="file-input" type="file" accept="image/*" v-on:change="handleUploadQR" ref="qrcodeInput">
                         {{ $t('label.upload_qrcode') }}
                     </label>
                 </div>

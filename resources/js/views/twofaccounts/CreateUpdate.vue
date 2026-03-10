@@ -141,6 +141,8 @@
 
     onMounted(() => {
         if (route.name == 'editAccount') {
+            showSpinner.value = true
+
             twofaccountService.get(props.twofaccountId).then(response => {
                 form.fill(response.data)
                 if (form.group_id == null) {
@@ -150,6 +152,9 @@
                 // set account icon as temp icon
                 tempIcon.value = form.icon
                 showAdvancedForm.value = true
+            })
+            .finally(() => {
+                showSpinner.value = false
             })
         }
         else if( bus.decodedUri ) {
