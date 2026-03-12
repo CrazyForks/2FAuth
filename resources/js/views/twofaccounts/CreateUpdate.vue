@@ -750,7 +750,9 @@
             <VueFooter>
                 <template #default>
                     <p class="control">
-                        <VueButton nativeType="submit" :id="isEditMode ? 'btnUpdate' : 'btnCreate'" :isLoading="form.isBusy" class="is-rounded" >{{ isEditMode ? $t('label.save') : $t('label.create') }}</VueButton>
+                        <VueButton nativeType="submit" @click="handleSubmit" :id="isEditMode ? 'btnUpdate' : 'btnCreate'" :isLoading="form.isBusy" class="is-rounded">
+                            {{ isEditMode ? $t('label.save') : $t('label.create') }}
+                        </VueButton>
                     </p>
                     <p class="control" v-if="form.otp_type && form.secret">
                         <button id="btnPreview" type="button" class="button is-success is-rounded has-text-white" @click="previewOTP">{{ $t('label.test') }}</button>
