@@ -1,6 +1,7 @@
 {
     "include": [
         "./resources/js/**/*",
+        "./*.js",
         "./auto-imports.d.ts"
     ],
     "compilerOptions": {
