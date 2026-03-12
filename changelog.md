@@ -1,5 +1,11 @@
 # Change log
 
+## [6.1.1] - 2026-03-09
+
+### Fixed
+
+- [issue #532](https://github.com/Bubka/2FAuth/issues/532) Unable to create new entries via the Advanced Form
+
 ## [6.1.0] - 2026-03-09
 
 ### Added
